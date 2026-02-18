@@ -13,6 +13,7 @@ bool check_login(const vector<User>& user, const string& input_user, const strin
     
 void saveuser(const string& u, const string& p);
 void loaduser(vector<User>& user );
+bool check_user(const vector<User>& user, const string& inputnew_user);
 int main(){
     //ประกาศตัวแปรเก็บข้อมูลผู้ใช้
 
@@ -52,6 +53,10 @@ int main(){
     User new_user;
     cout<<"Enter new username: ";
     cin>>new_user.username;
+        while(check_user(user, new_user.username)==false){
+            cout<<"Username dupplicate. Please enter a different username: ";
+            cin>>new_user.username;
+        }
     cout<<"Enter new password: ";
     cin>>new_user.password;
     user.push_back(new_user);
@@ -77,4 +82,12 @@ void loaduser(vector<User>& user){ //โหลดข้อมูลผู้ใ�
         user.push_back(u);
     }
     file.close();
+}
+bool check_user(const vector<User>& user, const string& inputnew_user){ //ตรวจสอบว่ามีผู้ใช้นี้อยู่แล้วหรือไม่
+    for (const User& u : user){
+        if (u.username == inputnew_user){
+            return false;
+        }
+    }
+    return true;
 }
