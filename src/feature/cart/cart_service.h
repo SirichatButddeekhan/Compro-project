@@ -21,6 +21,7 @@ class CartItem{
         int quantity;
 };
 
+//ระบบต่างๆรถเข็น
 class CartSystem{
     private:
         vector<MenuItem> menu;
@@ -39,7 +40,7 @@ void CartSystem::loadMenu(string){
 }
 
 //ฟังก์ชันแสดงเมนุสำหรับทดสอบ
-void ShowMenuForTest(){
+void CartSystem::ShowMenuForTest(){
 
 }
 
