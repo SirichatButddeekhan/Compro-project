@@ -1,1 +1,6 @@
-ข้าวมันไก่ 45
+1 Padthai 40 true delicious
+2 FriedRice 35 true delicious
+3 Tomyum 45 true delicious
+4 Somtum 55 true delicious
+5 PadKrapow 60 true delicious
+6 Chicken 200 true delicious
