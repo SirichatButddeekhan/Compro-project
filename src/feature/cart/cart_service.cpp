@@ -5,22 +5,29 @@
 using namespace std;
 
 //Data base Menu
-struct MenuItem{
-    int id;
-    string name;
-    double price;
-    bool available;
-    string descripstion;
+class MenuItem{
+    public:
+        int id;
+        string name;
+        double price;
+        bool available;
+        string descripstion;
 };
 
 //ตัวแปรใน Cart
-struct CartItem{
-    MenuItem item;
-    int quantity;
+class CartItem{
+    public:
+        MenuItem item;
+        int quantity;
+};
+
+class CartSystem{
+    public:
+        void addToCart(vector<CartItem> &, MenuItem);
 };
 
 //ฟังก์ชันเพิ่มลงรถเข็น
-void addToCart(vector<CartItem> &cart, MenuItem menu){
+void CartSystem::addToCart(vector<CartItem> &cart, MenuItem menu){
     if(!menu.available){ //เช็คว่าเมนูยังเปิดขายอยู่มั้ย
         cout << "Sold out";
         return;
