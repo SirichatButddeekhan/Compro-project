@@ -22,30 +22,63 @@ class CartItem{
 };
 
 class CartSystem{
+    private:
+        vector<MenuItem> menu;
+        vector<CartItem> cart;
     public:
-        void addToCart(vector<CartItem> &, MenuItem);
+        void loadMenu(string);
+        void ShowMenuForTest(); //แสดงเมนูสำหรับทดสอบโค้ดเฉยๆ
+        void addToCart(int id);
+        double calcutale();
+        void ShowReceipt();
 };
 
-//ฟังก์ชันเพิ่มลงรถเข็น
-void CartSystem::addToCart(vector<CartItem> &cart, MenuItem menu){
-    if(!menu.available){ //เช็คว่าเมนูยังเปิดขายอยู่มั้ย
-        cout << "Sold out";
-        return;
-    }
+//ฟังก์ชันโหลดเมนูจากไฟล์
+void CartSystem::loadMenu(string){
 
-    for(int i = 0; i < cart.size(); i++){ //เช็คว่ามีเมนูนี้ในรถเข็นอยู่แล้วรึป่าว
-        if(cart[i].item.id == menu.id){
-            cart[i].quantity++;
-            cout << "Menu +1";
+}
+
+//ฟังก์ชันแสดงเมนุสำหรับทดสอบ
+void ShowMenuForTest(){
+
+}
+
+//ฟังก์ชันเพิ่มลงรถเข็น
+void CartSystem::addToCart(int id){
+    for(int i = 0; i < menu.size(); i++){
+        if(menu[i].id == id){
+            if(!menu[i].available){ //เช็คว่าเมนูยังเปิดขายอยู่มั้ย
+                cout << "Sold out\n";
+                return;
+            }
+            for(int i = 0; i < cart.size(); i++){ //เช็คว่ามีเมนูนี้ในรถเข็นอยู่แล้วรึป่าว
+                if(cart[i].item.id == id){
+                    cart[i].quantity++;
+                    cout << "Menu + 1\n";
+                    return;
+                }
+            }
+            cart.push_back({menu[i],1}); //เพิ่มเมนูนั้นลงรถเข็น
             return;
         }
+        cout << "Menu not found.\n";
     }
-
-    cart.push_back({menu,1}); //เพิ่มเมนูนั้นลงรถเข็น
 }
 
 int main(){
     
+    CartSystem item;
+
+    item.loadMenu("MenuItem.txt");
+    item.ShowMenuForTest(); //แสดงเมนูสำหรับทดสอบระบบเฉยๆ
+    int choice;
+    while(true){
+        cout << "Choose Menu (Select 0 for end program)";
+        cin >> choice;
+        if(choice == 0) break;
+        item.addToCart(choice);
+    }
+    item.ShowReceipt();
 
     return 0;
 }
