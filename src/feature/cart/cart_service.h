@@ -75,12 +75,12 @@ void CartSystem::loadMenu(string file){
 void CartSystem::ShowMenuForTest(){
     cout << "------------------------------ MENU ------------------------------\n";
     //ส่วนหัวคอลัมป์
-        cout << left << setw(4) << "ID";
-        cout << "| " << left << setw(15) << "Name";
-        cout << "| " << left << setw(8) << "Price";
-        cout << "| " << left << setw(12) << "Stat";
-        cout << "| " << left << setw(20) << "Descripstion" << endl;
-        cout << "------------------------------------------------------------------\n";
+    cout << left << setw(4) << "ID";
+    cout << "| " << left << setw(15) << "Name";
+    cout << "| " << left << setw(8) << "Price";
+    cout << "| " << left << setw(12) << "Stat";
+    cout << "| " << left << setw(20) << "Descripstion" << endl;
+    cout << "------------------------------------------------------------------\n";
     for(int i = 0; i < menu.size(); i++){
         //ข้อมูลข้างใน
         cout << left << setw(4) << menu[i].id;
@@ -118,7 +118,18 @@ void CartSystem::addToCart(int id){
 
 //ฟังก์ชันลบออกจากรถเข็น
 void CartSystem::removeFromCart(int id){
-    cout << "Not yet\n";
+    for(int i = 0; i < cart.size(); i++){
+        if(cart[i].item.id == id){
+            cart[i].quantity--;
+            if(cart[i].quantity == 0){
+                cout << cart[i].item.name << " removed.\n";
+                cart.erase(cart.begin() + i);
+            }
+            else cout << cart[i].item.name << " - 1\n";
+            return;
+        }
+    }
+    cout << "This menu not in cart.\n";
 }
 
 //ฟังก์ชันคำนวณราคา
@@ -129,10 +140,37 @@ double CartSystem::calculate(){
 
 //ฟังก์ชันแสดงของในรถเข็น
 void CartSystem::ShowCart(){
-    cout << "----------\n";
+    cout << "------------------------------ CART ------------------------------\n";
+    if(cart.empty()){
+        cout << "Cart is empty.\n";
+        cout << "------------------------------------------------------------------\n";
+        return;
+    }
+    //ส่วนหัวคอลัมป์
+    cout << left << setw(4) << "ID";
+    cout << "| " << left << setw(20) << "Name";
+    cout << " |" << right << setw(15) << "Amount";
+    cout << " |" << right << setw(20) << "Price" << endl;
+    //cout << "| " << left << setw(10) << "Total" << endl;
+    cout << "------------------------------------------------------------------\n";
+    for(int i = 0; i < cart.size(); i++){
+        //ข้อมูลข้างใน
+        double itemPrice = cart[i].item.price * cart[i].quantity; 
+        cout << left << setw(4) << cart[i].item.id;
+        cout << "| " << left << setw(20) << cart[i].item.name;
+        cout << " |" << right << setw(15) << cart[i].quantity; 
+        cout << " |" << right << setw(20) << fixed << setprecision(2) << itemPrice << endl;
+    }
+    //ส่วนท้ายรวมราคาทั้งหมด
+    cout << "------------------------------------------------------------------\n";
+    cout << left << setw(4) << " ";
+    cout << "  " << left << setw(20) << " ";
+    cout << " |" << right << setw(15) << "Total";
+    cout << " |" << right << setw(20) << calculate() << endl;
+    cout << "------------------------------------------------------------------\n";
 }
 
 //ฟังก์ชันแสดงใบจอง
 void CartSystem::ShowReceipt(){
-    cout << "HAHA\n";
+    cout << "Not Yet\n";
 }

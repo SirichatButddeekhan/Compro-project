@@ -15,14 +15,13 @@ int main(){
     int id; //ตัวแปรเลขสินค้า
 
     item.loadMenu("MenuItem.txt");
-    item.ShowMenuForTest(); //แสดงเมนูสำหรับทดสอบระบบเฉยๆ
-    
 
     while(true){
         //เลือกโหมด หรือถูกย้อนกลับมา 'B'
         if(mode == ' '){
+            item.ShowMenuForTest(); //แสดงเมนูสำหรับทดสอบระบบเฉยๆ
             cout << "------------------------------ MODE ------------------------------\n";
-            cout << "[A] Add to cart [D] Remove form cart [C] Open cart [E] Exit\n";
+            cout << "[A] Add to cart | [D] Remove form cart | [C] Open cart | [E] Exit\n";
             cout << "Select mode : ";
             cin >> choice;
             choice = toupper(choice);
@@ -42,10 +41,15 @@ int main(){
         //mode add to cart 'A'
         else if(mode == 'A'){
             cout << "--------------- ADD TO CART MODE ---------------\n";
-            cout << "Enter menu id ([B] to back) : ";
+            cout << "Enter menu id ([M] Mode [C] Open Cart) : ";
             cin >> choice;
-            if(choice == 'B'){
+            choice = toupper(choice);
+            if(choice == 'M'){
                 mode = ' ';
+                continue;
+            }
+            else if(choice == 'C'){
+                mode = 'C';
                 continue;
             }
             cin.putback(choice);
@@ -56,10 +60,15 @@ int main(){
         //mode remove to cart 'D'
         else if(mode == 'D'){
             cout << "------------ REMOVE FROM CART MODE ------------\n";
-            cout << "Enter menu id ([B] to back) : ";
+            cout << "Enter menu id ([M] Mode [C] Open Cart) : ";
             cin >> choice;
-            if(choice == 'B'){
+            choice = toupper(choice);
+            if(choice == 'M'){
                 mode = ' ';
+                continue;
+            }
+            else if(choice == 'C'){
+                mode = 'C';
                 continue;
             }
             cin.putback(choice);
@@ -69,16 +78,24 @@ int main(){
         }
         //mode open cart 'C'
         else if(mode == 'C'){
-            cout << "----------------- CART MODE -----------------\n";
             item.ShowCart();
-            cout << "Select [R] Show Receipt [B] back : ";
+            cout << "Select [A] Add item | [D] Remove item | [R] Show Receipt and exit | [M] Mode : ";
             cin >> choice;
             choice = toupper(choice);
             if(choice == 'R'){
                 item.ShowReceipt();
                 break;
             }
-            else if(choice == 'B'){
+            else if(choice == 'A'){
+                item.ShowMenuForTest(); //แสดงเมนูสำหรับทดสอบระบบเฉยๆ
+                mode = 'A';
+                continue;
+            }
+            else if(choice == 'D'){
+                mode = 'D';
+                continue;
+            }
+            else if(choice == 'M'){
                 mode = ' ';
                 continue;
             }
