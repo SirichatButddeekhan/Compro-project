@@ -2,11 +2,15 @@
 #include <vector>
 #include <fstream>
 #include <string>
+#include <sstream>
 #include <iomanip>
+#include <cstdlib>
 #include "cart_service.h"
 using namespace std;
 
 int main(){
+
+    srand(time(0));
     
     CartSystem item;
 
@@ -27,7 +31,7 @@ int main(){
             choice = toupper(choice);
 
             if(choice == 'E'){
-                cout << "Good bye";
+                cout << "GOOD BYE!!";
                 break;
             }
             if(choice == 'A' || choice == 'D' || choice == 'C'){

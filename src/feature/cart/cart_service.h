@@ -4,6 +4,7 @@
 #include <string>
 #include <sstream>
 #include <iomanip>
+#include <cstdlib>
 using namespace std;
 
 //Data base Menu
@@ -73,7 +74,7 @@ void CartSystem::loadMenu(string file){
 
 //ฟังก์ชันแสดงเมนุสำหรับทดสอบ
 void CartSystem::ShowMenuForTest(){
-    cout << "------------------------------ MENU ------------------------------\n";
+    cout << "\n\n------------------------------ MENU ------------------------------\n";
     //ส่วนหัวคอลัมป์
     cout << left << setw(4) << "ID";
     cout << "| " << left << setw(15) << "Name";
@@ -85,12 +86,12 @@ void CartSystem::ShowMenuForTest(){
         //ข้อมูลข้างใน
         cout << left << setw(4) << menu[i].id;
         cout << "| " << left << setw(15) << menu[i].name; 
-        cout << "| " << left << setw(8) << fixed << setprecision(2) << menu[i].price;
+        cout << "| " << left << setw(8) << fixed << setprecision(1) << menu[i].price;
         if(menu[i].available) cout << "| " << left << setw(12) << "Available"; //เช็คว่ามีอยู่มั้ย
         else cout << "| " << left << setw(12) << "Sold out";
         cout << "| " << left << setw(20) << menu[i].descripstion << endl;
     }
-    cout << "------------------------------------------------------------------\n";
+    cout << "------------------------------------------------------------------\n\n";
 }
 
 //ฟังก์ชันเพิ่มลงรถเข็น
@@ -134,13 +135,16 @@ void CartSystem::removeFromCart(int id){
 
 //ฟังก์ชันคำนวณราคา
 double CartSystem::calculate(){
-    int sum = 0;
+    double sum = 0;
+    for(int i = 0; i < cart.size(); i++){
+        sum += cart[i].item.price * cart[i].quantity;
+    }
     return sum;
 }
 
 //ฟังก์ชันแสดงของในรถเข็น
 void CartSystem::ShowCart(){
-    cout << "------------------------------ CART ------------------------------\n";
+    cout << "\n\n------------------------------ CART ------------------------------\n";
     if(cart.empty()){
         cout << "Cart is empty.\n";
         cout << "------------------------------------------------------------------\n";
@@ -159,7 +163,7 @@ void CartSystem::ShowCart(){
         cout << left << setw(4) << cart[i].item.id;
         cout << "| " << left << setw(20) << cart[i].item.name;
         cout << " |" << right << setw(15) << cart[i].quantity; 
-        cout << " |" << right << setw(20) << fixed << setprecision(2) << itemPrice << endl;
+        cout << " |" << right << setw(20) << fixed << setprecision(1) << itemPrice << endl;
     }
     //ส่วนท้ายรวมราคาทั้งหมด
     cout << "------------------------------------------------------------------\n";
@@ -172,5 +176,40 @@ void CartSystem::ShowCart(){
 
 //ฟังก์ชันแสดงใบจอง
 void CartSystem::ShowReceipt(){
-    cout << "Not Yet\n";
+    if(cart.empty()){
+        cout << "\n\n----------------------------------------------\n";
+        cout << "          Cart is empty!! Good bye!!\n";
+        cout << "----------------------------------------------\n";
+        return;
+    }
+
+    int trackId = 10000 + rand()%10;
+    int totalQty = 0;
+    cout << "\n\n--------------- Purchase Order ---------------\n";
+    cout << "Order No. : " << trackId << endl;
+    cout << "----------------------------------------------\n";
+    
+    //ส่วนหัวคอลัมป์
+    cout << left << setw(15) << "Name";
+    cout << right << setw(5) << "Qty";
+    cout << right << setw(14) << "Price";
+    cout << right << setw(12) << "Total" << endl;
+    cout << "----------------------------------------------\n";
+    
+    for(int i = 0; i < cart.size(); i++){
+        //ข้อมูลข้างใน
+        double itemPrice = cart[i].item.price * cart[i].quantity;
+        cout << left << setw(15) << cart[i].item.name;
+        cout << right << setw(5) << cart[i].quantity;
+        cout << right << setw(14) << cart[i].item.price;
+        cout << right << setw(12) << fixed << setprecision(2) << itemPrice << endl;
+        totalQty += cart[i].quantity;
+    }
+    //ส่วนท้ายรวมราคาทั้งหมด
+    cout << "----------------------------------------------\n";
+    cout << left << setw(15) << "Total Quantity";
+    cout << right << setw(5) << totalQty;
+    cout << right << setw(14) << "GRAND TOTAL";
+    cout << right << setw(12) << fixed << setprecision(2) << calculate() << endl;
+    cout << "----------------------------------------------\n";
 }
