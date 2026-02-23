@@ -28,7 +28,7 @@ int main(){
             cout << "[A] Add to cart | [D] Remove form cart | [C] Open cart | [E] Exit\n";
             cout << "Select mode : ";
             cin >> choice;
-            choice = toupper(choice);
+            choice = toupper(choice); //ทำเป็นพิมพ์ใหญ่
 
             if(choice == 'E'){
                 cout << "GOOD BYE!!";
@@ -56,8 +56,8 @@ int main(){
                 mode = 'C';
                 continue;
             }
-            cin.putback(choice);
-            cin >> id;
+            cin.putback(choice); //ใช้ค่า cin เดิมเข้ามาใน cin ใหม่
+            cin >> id; //เอา cin ใหม่นั้นที่มาจากอันเดิมมาใส่เป็นเลข
 
             item.addToCart(id);
         }
@@ -87,7 +87,7 @@ int main(){
             cin >> choice;
             choice = toupper(choice);
             if(choice == 'R'){
-                item.ShowReceipt();
+                item.ShowReceipt(); //โชว์ใบเสร็จแล้วจะออกโปรแกรมเลย
                 break;
             }
             else if(choice == 'A'){

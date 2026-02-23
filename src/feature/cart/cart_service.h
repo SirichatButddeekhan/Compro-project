@@ -84,12 +84,12 @@ void CartSystem::ShowMenuForTest(){
     cout << "------------------------------------------------------------------\n";
     for(int i = 0; i < menu.size(); i++){
         //ข้อมูลข้างใน
-        cout << left << setw(4) << menu[i].id;
-        cout << "| " << left << setw(15) << menu[i].name; 
-        cout << "| " << left << setw(8) << fixed << setprecision(1) << menu[i].price;
-        if(menu[i].available) cout << "| " << left << setw(12) << "Available"; //เช็คว่ามีอยู่มั้ย
-        else cout << "| " << left << setw(12) << "Sold out";
-        cout << "| " << left << setw(20) << menu[i].descripstion << endl;
+        cout << left << setw(4) << menu[i].id; //เลขเมนู
+        cout << "| " << left << setw(15) << menu[i].name; //ชื่อ
+        cout << "| " << left << setw(8) << fixed << setprecision(1) << menu[i].price; //ราคา
+        if(menu[i].available) cout << "| " << left << setw(12) << "Available"; //เช็คว่ามีอยู่มั้ย (มีอยู่)
+        else cout << "| " << left << setw(12) << "Sold out"; //ไม่มีแล้ว
+        cout << "| " << left << setw(20) << menu[i].descripstion << endl; //คำอธิบาย
     }
     cout << "------------------------------------------------------------------\n\n";
 }
@@ -114,13 +114,13 @@ void CartSystem::addToCart(int id){
             return;
         }
     }
-    cout << "Menu not found.\n";
+    cout << "Menu not found.\n"; //ถ้าไม่เจอเมนูนั้นเลย
 }
 
 //ฟังก์ชันลบออกจากรถเข็น
 void CartSystem::removeFromCart(int id){
     for(int i = 0; i < cart.size(); i++){
-        if(cart[i].item.id == id){
+        if(cart[i].item.id == id){ //เช็คว่ามันตรงกับ id ที่ใส่มามั้ย
             cart[i].quantity--;
             if(cart[i].quantity == 0){
                 cout << cart[i].item.name << " removed.\n";
@@ -130,14 +130,14 @@ void CartSystem::removeFromCart(int id){
             return;
         }
     }
-    cout << "This menu not in cart.\n";
+    cout << "This menu not in cart.\n"; //ถ้าไม่เจอเมนูนั้นในรถเข็น
 }
 
 //ฟังก์ชันคำนวณราคา
 double CartSystem::calculate(){
     double sum = 0;
     for(int i = 0; i < cart.size(); i++){
-        sum += cart[i].item.price * cart[i].quantity;
+        sum += cart[i].item.price * cart[i].quantity; //ราคา คูณ จำนวน แล้วเอามารวมกันทั้งหมด
     }
     return sum;
 }
