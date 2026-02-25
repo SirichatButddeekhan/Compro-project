@@ -27,6 +27,7 @@ int main(){
     while(true){    //เช็คว่ามีผู้ใช้หรือไม่ ถ้าไม่มีให้เพิ่มผู้ใช้ใหม่ ถ้ามีแล้วให้เข้าสู่ระบบ พิมพ์มั่ววนใหม่
         cout<<"you have username ? (yes or no) "<<endl;
         cin>>answer;
+     cin.ignore(numeric_limits<streamsize>::max(), '\n'); //ล้าง\n
         if (answer=="no"){
             add_user(user);
             break;
@@ -39,7 +40,7 @@ int main(){
 
    
     //เข้าสู่ระบบ
-    cin.ignore(numeric_limits<streamsize>::max(), '\n'); //ล้าง\n
+    
     while(true){ //วนลูปจนกว่าจะเข้าสู่ระบบสำเร็จ
         cout<<"login page"<<endl;
         bool key=false;
@@ -62,7 +63,7 @@ int main(){
 }
     void add_user(vector<User>& user){ //เพิ่มผู้ใช้ใหม่
     User new_user;
-    cin.ignore(numeric_limits<streamsize>::max(), '\n'); //ล้าง\n
+    
     cout<<"Enter new username: ";
     getline(cin, new_user.username);
  while(check_user(user, new_user.username)==false || nohas_space(new_user.username)==false){//ตรวจสอบว่าชื่อผู้ใช้ซ้ำหรือมีช่องว่างหรือไม่ ถ้ามีให้พิมพ์ใหม่
