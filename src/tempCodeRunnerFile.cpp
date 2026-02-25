@@ -2,56 +2,45 @@
 #include <gl/GL.h>
 
 #include "imgui.h"
-#include "imgui_impl_win32.h"
-#include "imgui_impl_opengl3.h"
+#include "backends/imgui_impl_win32.h"
+#include "backends/imgui_impl_opengl3.h"
 
 #pragma comment(lib, "opengl32.lib")
 
-
-extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(
-    HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
-);
-
-LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
+LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
         return true;
 
-    if (msg == WM_DESTROY)
-    {
+    switch (msg) {
+    case WM_DESTROY:
         PostQuitMessage(0);
         return 0;
     }
     return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
-int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
-{
-    // ===== 1. Create window =====
+int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
+    // 1. สร้าง window
     WNDCLASS wc = {};
-    wc.lpfnWndProc   = WndProc;
-    wc.hInstance     = hInstance;
-    wc.lpszClassName = "ImGuiExample";
+    wc.lpfnWndProc = WndProc;
+    wc.hInstance = hInstance;
+    wc.lpszClassName = "ImGuiWindow";
     RegisterClass(&wc);
 
     HWND hwnd = CreateWindow(
         wc.lpszClassName,
-        "ImGui Minimal Example",
+        "My GUI App",
         WS_OVERLAPPEDWINDOW,
         100, 100, 800, 600,
         NULL, NULL, hInstance, NULL
     );
 
     ShowWindow(hwnd, SW_SHOW);
-    UpdateWindow(hwnd);
 
-    // ===== 2. OpenGL context =====
+    // 2. OpenGL context
     HDC hdc = GetDC(hwnd);
-
-    PIXELFORMATDESCRIPTOR pfd = {};
-    pfd.nSize      = sizeof(pfd);
-    pfd.nVersion   = 1;
-    pfd.dwFlags    = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
+    PIXELFORMATDESCRIPTOR pfd = { sizeof(pfd), 1 };
+    pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
     pfd.iPixelType = PFD_TYPE_RGBA;
     pfd.cColorBits = 32;
 
@@ -61,22 +50,18 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
     HGLRC glrc = wglCreateContext(hdc);
     wglMakeCurrent(hdc, glrc);
 
-    glViewport(0, 0, 800, 600);
-
-    // ===== 3. ImGui setup =====
+    // 3. ImGui
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGui::StyleColorsDark();
 
     ImGui_ImplWin32_Init(hwnd);
-    ImGui_ImplOpenGL3_Init("#version 130");
+    ImGui_ImplOpenGL3_Init();
 
-    // ===== 4. Main loop =====
+    // 4. loop
     MSG msg = {};
-    while (msg.message != WM_QUIT)
-    {
-        if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-        {
+    while (msg.message != WM_QUIT) {
+        if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
             continue;
@@ -88,21 +73,17 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 
         // ===== GUI =====
         ImGui::Begin("Hello");
-        ImGui::Text("ImGui is working!");
+        ImGui::Text("My first GUI!");
         ImGui::End();
         // ===============
 
         ImGui::Render();
-
-        glViewport(0, 0, 800, 600);
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         SwapBuffers(hdc);
     }
 
-    // ===== Cleanup =====
+    // cleanup
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplWin32_Shutdown();
     ImGui::DestroyContext();
