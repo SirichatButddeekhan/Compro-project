@@ -7,9 +7,9 @@
 // - Documentation        https://dearimgui.com/docs (same as your local docs/ folder).
 // - Introduction, links and more at the top of imgui.cpp
 
-#include "imgui.h"
-#include "imgui_impl_sdl2.h"
-#include "imgui_impl_dx11.h"
+#include "..\..\imgui.h"
+#include "..\..\backends\imgui_impl_sdl2.h"
+#include "..\..\backends\imgui_impl_dx11.h"
 #include <d3d11.h>
 #include <stdio.h>
 #include <SDL.h>

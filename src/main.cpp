@@ -1,115 +1,123 @@
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#include <gl/GL.h>
+#define BTN_OK 1001
+HWND hEditusername, hEditpassword;
 
-#include "imgui.h"
-#include "imgui_impl_win32.h"
-#include "imgui_impl_opengl3.h"
+LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+    switch(msg){
+        
+        case WM_CREATE:
+        CreateWindowExW(
 
-#pragma comment(lib, "opengl32.lib")
 
 
-extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(
-    HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
-);
+            WS_EX_CLIENTEDGE,     // ขอบสวย ๆ
+            L"STATIC",            // ประเภท: ข้อความ
+            L"Username:",         // ข้อความเริ่มต้น
+            WS_CHILD | WS_VISIBLE | SS_LEFT,
+            20, 20,               // ตำแหน่ง
+            80, 25,              // ขนาด
+            hwnd,
+            NULL,
+            GetModuleHandle(NULL),
+            NULL
+        )
+        ;
+         CreateWindowExW(
 
-LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-    if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
-        return true;
 
-    if (msg == WM_DESTROY)
-    {
-        PostQuitMessage(0);
-        return 0;
-    }
-    return DefWindowProc(hWnd, msg, wParam, lParam);
-}
 
-int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
-{
-    // ===== 1. Create window =====
-    WNDCLASS wc = {};
-    wc.lpfnWndProc   = WndProc;
-    wc.hInstance     = hInstance;
-    wc.lpszClassName = "ImGuiExample";
-    RegisterClass(&wc);
+            WS_EX_CLIENTEDGE,     // ขอบสวย ๆ
+            L"STATIC",            // ประเภท: ข้อความ
+            L"Password:",         // ข้อความเริ่มต้น
+            WS_CHILD | WS_VISIBLE | SS_LEFT,
+            20, 50,               // ตำแหน่ง
+            80, 25,              // ขนาด
+            hwnd,
+            NULL,
+            GetModuleHandle(NULL),
+            NULL
+        )
+        ;
+            hEditusername = CreateWindowExW(
+            WS_EX_CLIENTEDGE,     // ขอบสวย ๆ
+            L"EDIT",              // ประเภท: กล่องข้อความ
+            L"",                  // ข้อความเริ่มต้น
+            WS_CHILD | WS_VISIBLE | ES_LEFT | ES_AUTOHSCROLL,
+            100, 20,               // ตำแหน่ง
+            250, 25,              // ขนาด
+            hwnd,
+            NULL,
+            GetModuleHandle(NULL),
+            NULL
+        );
+         hEditpassword = CreateWindowExW(
+            WS_EX_CLIENTEDGE,     // ขอบสวย ๆ
+            L"EDIT",              // ประเภท: กล่องข้อความ
+            L"",                  // ข้อความเริ่มต้น
+            WS_CHILD | WS_VISIBLE | ES_LEFT | ES_AUTOHSCROLL,
+            100, 50,               // ตำแหน่ง
+            250, 25,              // ขนาด
+            hwnd,
+            NULL,
+            GetModuleHandle(NULL),
+            NULL
+        );
+           CreateWindowExW(
+        0,
+        L"BUTTON",// ประเภท: ปุ่ม
+        L"confirm", // ข้อความบนปุ่ม
+        WS_CHILD | WS_VISIBLE | BS_DEFPUSHBUTTON, 
+        110, 80, 100, 30, // ตำแหน่งและขนาด
+        hwnd, (HMENU)BTN_OK, GetModuleHandle(NULL), NULL
+    );
+    return 0;
+      
 
-    HWND hwnd = CreateWindow(
-        wc.lpszClassName,
-        "ImGui Minimal Example",
+    
+    
+        case WM_DESTROY:
+            PostQuitMessage(0);
+            return 0;}
+    
+    return DefWindowProc(hwnd, msg, wParam, lParam);}
+
+
+
+   int WINAPI wWinMain(
+    HINSTANCE hInstance,
+    HINSTANCE hPrevInstance,
+    LPWSTR     lpCmdLine,
+    int       nCmdShow
+)
+ {
+    WNDCLASSEXW wc{};
+    wc.cbSize = sizeof(WNDCLASSEXW);
+    wc.lpfnWndProc = WndProc;
+    wc.hInstance = hInstance;
+    wc.lpszClassName = L"MyWindow";
+    wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+    wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+
+    RegisterClassExW(&wc);
+
+    HWND hwnd = CreateWindowExW(
+        0,
+        L"MyWindow",
+        L"LOGIN",
         WS_OVERLAPPEDWINDOW,
-        100, 100, 800, 600,
+        CW_USEDEFAULT, CW_USEDEFAULT,
+        400, 300,
         NULL, NULL, hInstance, NULL
     );
 
-    ShowWindow(hwnd, SW_SHOW);
+    ShowWindow(hwnd, nCmdShow);
     UpdateWindow(hwnd);
 
-    // ===== 2. OpenGL context =====
-    HDC hdc = GetDC(hwnd);
-
-    PIXELFORMATDESCRIPTOR pfd = {};
-    pfd.nSize      = sizeof(pfd);
-    pfd.nVersion   = 1;
-    pfd.dwFlags    = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
-    pfd.iPixelType = PFD_TYPE_RGBA;
-    pfd.cColorBits = 32;
-
-    int pf = ChoosePixelFormat(hdc, &pfd);
-    SetPixelFormat(hdc, pf, &pfd);
-
-    HGLRC glrc = wglCreateContext(hdc);
-    wglMakeCurrent(hdc, glrc);
-
-    glViewport(0, 0, 800, 600);
-
-    // ===== 3. ImGui setup =====
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGui::StyleColorsDark();
-
-    ImGui_ImplWin32_Init(hwnd);
-    ImGui_ImplOpenGL3_Init("#version 130");
-
-    // ===== 4. Main loop =====
-    MSG msg = {};
-    while (msg.message != WM_QUIT)
-    {
-        if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-        {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
-            continue;
-        }
-
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplWin32_NewFrame();
-        ImGui::NewFrame();
-
-        // ===== GUI =====
-        ImGui::Begin("Hello");
-        ImGui::Text("ImGui is working!");
-        ImGui::End();
-        // ===============
-
-        ImGui::Render();
-
-        glViewport(0, 0, 800, 600);
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-        SwapBuffers(hdc);
+    MSG msg;
+    while (GetMessage(&msg, NULL, 0, 0)) {
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
     }
-
-    // ===== Cleanup =====
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplWin32_Shutdown();
-    ImGui::DestroyContext();
-
-    wglMakeCurrent(NULL, NULL);
-    wglDeleteContext(glrc);
-    ReleaseDC(hwnd, hdc);
-
     return 0;
 }

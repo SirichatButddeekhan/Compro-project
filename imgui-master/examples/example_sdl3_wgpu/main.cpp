@@ -9,9 +9,9 @@
 // - Introduction, links and more at the top of imgui.cpp
 
 
-#include "imgui.h"
-#include "imgui_impl_sdl3.h"
-#include "imgui_impl_wgpu.h"
+#include "..\..\imgui.h"
+#include "..\..\backends\imgui_impl_sdl3.h"
+#include "..\..\backends\imgui_impl_wgpu.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <SDL3/SDL.h>

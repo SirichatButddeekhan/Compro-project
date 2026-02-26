@@ -17,8 +17,8 @@
 #include <stdint.h>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
-#include "imgui.h"
-#include "imgui_impl_allegro5.h"
+#include "..\..\imgui.h"
+#include "..\..\backends\imgui_impl_allegro5.h"
 
 int main(int, char**)
 {

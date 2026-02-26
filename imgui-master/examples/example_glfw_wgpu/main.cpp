@@ -8,12 +8,12 @@
 // - Documentation        https://dearimgui.com/docs (same as your local docs/ folder).
 // - Introduction, links and more at the top of imgui.cpp
 
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_wgpu.h"
+#include "..\..\imgui.h"
+#include "..\..\backends\imgui_impl_glfw.h"
+#include "..\..\backends\imgui_impl_wgpu.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <GLFW/glfw3.h>
+#include <imgui/examples/libs/glfw/include/GLFW/glfw3.h>
 
 // This example can also compile and run with Emscripten! See 'Makefile.emscripten' for details.
 #ifdef __EMSCRIPTEN__
@@ -544,7 +544,7 @@ bool InitWGPU(GLFWwindow* window)
 #endif
 #endif
 #endif
-#include <GLFW/glfw3native.h>
+#include <imgui/examples/libs/glfw/include/GLFW/glfw3native.h>
 #undef Status                       // X11 headers are leaking this and also 'Success', 'Always', 'None', all used in DAWN api. Add #undef if necessary.
 
 WGPUSurface CreateWGPUSurface(const WGPUInstance& instance, GLFWwindow* window)

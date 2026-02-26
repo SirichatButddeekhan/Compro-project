@@ -6,9 +6,9 @@
 // - Documentation        https://dearimgui.com/docs (same as your local docs/ folder).
 // - Introduction, links and more at the top of imgui.cpp
 
-#include "imgui.h"
-#include "imgui_impl_android.h"
-#include "imgui_impl_opengl3.h"
+#include "..\..\imgui.h"
+#include "..\..\backends\imgui_impl_android.h"
+#include "..\..\backends\imgui_impl_opengl3.h"
 #include <android/log.h>
 #include <android_native_app_glue.h>
 #include <android/asset_manager.h>
