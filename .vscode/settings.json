@@ -1,0 +1,8 @@
+{
+  "code-runner.runInTerminal": true,
+  "code-runner.clearPreviousOutput": true,
+
+  "code-runner.executorMap": {
+    "cpp": "cd \"${workspaceFolder}/imgui-master/examples/example_win32_directx11\" && del main.exe && g++ main.cpp ../../imgui.cpp ../../imgui_draw.cpp ../../imgui_widgets.cpp ../../imgui_tables.cpp ../../imgui_demo.cpp ../../backends/imgui_impl_win32.cpp ../../backends/imgui_impl_dx11.cpp -I../.. -I../../backends -ld3d11 -ldxgi -ld3dcompiler -lgdi32 -ldwmapi -o main && .\\main"
+  }
+}
