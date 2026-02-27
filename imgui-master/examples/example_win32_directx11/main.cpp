@@ -137,8 +137,8 @@ int main(int, char**)
         if(ImGui::Begin("Cart Gui", &opened)){
 
 
-            ImGui::End();
-        }
+            
+        }ImGui::End();
 
         // Rendering
         ImGui::Render();
