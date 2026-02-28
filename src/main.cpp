@@ -1,13 +1,18 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #define BTN_OK 1001
+#define EDIT_USERNAME 2001
+#define EDIT_PASSWORD 2002
+#include <fstream>
+#include <string>
 HWND hEditusername, hEditpassword;
+
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     switch(msg){
         
         case WM_CREATE:
-        CreateWindowExW(
+        CreateWindowExW(//กล่องข้อความสำหรับ username
 
 
 
@@ -23,7 +28,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             NULL
         )
         ;
-         CreateWindowExW(
+         CreateWindowExW( //กล่องข้อความสำหรับ password
 
 
 
@@ -71,6 +76,23 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         110, 80, 100, 30, // ตำแหน่งและขนาด
         hwnd, (HMENU)BTN_OK, GetModuleHandle(NULL), NULL
     );
+    return 0;
+    case WM_COMMAND:
+    if (LOWORD(wParam) == BTN_OK) {
+
+        wchar_t user[100];
+        wchar_t pass[100];
+
+        GetWindowTextW(hEditusername, user, 100);
+        GetWindowTextW(hEditpassword, pass, 100);
+
+        MessageBoxW(
+            hwnd,
+            user,
+            L"คุณกรอก Username คือ",
+            MB_OK | MB_ICONINFORMATION
+        );
+    }
     return 0;
       
 
