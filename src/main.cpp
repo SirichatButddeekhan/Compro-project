@@ -1,5 +1,5 @@
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
+#define WIN32_LEAN_AND_MEAN // g++ main.cpp -municode -mwindows -o app.exe
+#include <windows.h> //.\app.exe
 #define BTN_OK 1001
 #define EDIT_USERNAME 2001 // ตัวแปรสำหรับเก็บรหัสของกล่องข้อความ username
 #define EDIT_PASSWORD 2002 // ตัวแปรสำหรับเก็บรหัสของกล่องข้อความ password
@@ -109,7 +109,20 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         }
         file.close();
         if (found) {//ถ้าเจอ username และ password ที่ตรงกันในไฟล์ ให้แสดงข้อความ login success
-            MessageBoxW(hwnd, L"Login Success!", L"Success", MB_OK | MB_ICONINFORMATION); 
+            MessageBoxW(hwnd, L"Login Success!", L"Success", MB_OK | MB_ICONINFORMATION);
+            HWND hAccount = CreateWindowExW(
+        0,
+        L"AccountWindow",          // class ที่ register ไว้
+        L"ACCOUNT",
+        WS_OVERLAPPEDWINDOW,
+        CW_USEDEFAULT, CW_USEDEFAULT,
+        400, 300,
+        NULL, NULL,
+        GetModuleHandle(NULL),
+        NULL 
+        );
+        ShowWindow(hAccount, SW_SHOW);
+        UpdateWindow(hAccount);
         } else {//ถ้าไม่เจอ username และ password ที่ตรงกันในไฟล์ ให้แสดงข้อความ login failed
             MessageBoxW(hwnd, L"Login Failed!", L"Failed", MB_OK | MB_ICONERROR);
         }
@@ -122,11 +135,34 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
     
     
-        case WM_DESTROY: //ถ้าโปรแกรมถูกปิด ให้ส่งข้อความ quit เพื่อออกจากโปรแกรม
+        case WM_DESTROY: 
             PostQuitMessage(0);
             return 0;}
     
     return DefWindowProc(hwnd, msg, wParam, lParam);} 
+    // หน้าต่างสำหรับแสดงข้อความหลังจาก login สำเร็จ
+    LRESULT CALLBACK AccountProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+    switch (msg) {
+        case WM_CREATE:
+            CreateWindowExW(
+                0,
+                L"STATIC",
+                L"Welcome to your account 🎉",
+                WS_CHILD | WS_VISIBLE,
+                50, 50, 250, 30,
+                hwnd,
+                NULL,
+                GetModuleHandle(NULL),
+                NULL
+            );
+            return 0;
+
+        case WM_DESTROY:
+            PostQuitMessage(0);
+            return 0;
+    }
+    return DefWindowProc(hwnd, msg, wParam, lParam);
+}
 
 
 
@@ -136,8 +172,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     LPWSTR     lpCmdLine,
     int       nCmdShow
 )
+
  {
-    WNDCLASSEXW wc{};
+    WNDCLASSEXW wc{}; //กำหนดข้อมูลสำหรับการสร้างหน้าต่าง login
     wc.cbSize = sizeof(WNDCLASSEXW);
     wc.lpfnWndProc = WndProc;
     wc.hInstance = hInstance;
@@ -145,9 +182,18 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     wc.hCursor = LoadCursor(NULL, IDC_ARROW);
     wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 
-    RegisterClassExW(&wc);
+    RegisterClassExW(&wc); //ลงทะเบียนหน้าต่าง account
+   WNDCLASSEXW wc2{};
+   wc2.cbSize = sizeof(WNDCLASSEXW);
+   wc2.lpfnWndProc = AccountProc;
+   wc2.hInstance = hInstance;
+   wc2.lpszClassName = L"AccountWindow";
+   wc2.hCursor = LoadCursor(NULL, IDC_ARROW);
+   wc2.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 
-    HWND hwnd = CreateWindowExW(
+RegisterClassExW(&wc2);
+
+    HWND hwnd = CreateWindowExW( //สร้างหน้าต่าง login
         0,
         L"MyWindow",
         L"LOGIN",
