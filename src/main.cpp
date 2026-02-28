@@ -1,11 +1,12 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #define BTN_OK 1001
-#define EDIT_USERNAME 2001
-#define EDIT_PASSWORD 2002
+#define EDIT_USERNAME 2001 // ตัวแปรสำหรับเก็บรหัสของกล่องข้อความ username
+#define EDIT_PASSWORD 2002 // ตัวแปรสำหรับเก็บรหัสของกล่องข้อความ password
 #include <fstream>
 #include <string>
-HWND hEditusername, hEditpassword;
+using namespace std;
+HWND hEditusername, hEditpassword; // ตัวแปรสำหรับเก็บ handle ของกล่องข้อความ
 
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
@@ -35,7 +36,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             WS_EX_CLIENTEDGE,     // ขอบสวย ๆ
             L"STATIC",            // ประเภท: ข้อความ
             L"Password:",         // ข้อความเริ่มต้น
-            WS_CHILD | WS_VISIBLE | SS_LEFT,
+            WS_CHILD | WS_VISIBLE | SS_LEFT, //
             20, 50,               // ตำแหน่ง
             80, 25,              // ขนาด
             hwnd,
@@ -44,7 +45,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             NULL
         )
         ;
-            hEditusername = CreateWindowExW(
+            hEditusername = CreateWindowExW( //input username
             WS_EX_CLIENTEDGE,     // ขอบสวย ๆ
             L"EDIT",              // ประเภท: กล่องข้อความ
             L"",                  // ข้อความเริ่มต้น
@@ -52,19 +53,19 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             100, 20,               // ตำแหน่ง
             250, 25,              // ขนาด
             hwnd,
-            NULL,
+            (HMENU)EDIT_USERNAME,
             GetModuleHandle(NULL),
             NULL
         );
-         hEditpassword = CreateWindowExW(
-            WS_EX_CLIENTEDGE,     // ขอบสวย ๆ
+         hEditpassword = CreateWindowExW(//input password
+            WS_EX_CLIENTEDGE,     // ขอบสวย ๆ 
             L"EDIT",              // ประเภท: กล่องข้อความ
             L"",                  // ข้อความเริ่มต้น
             WS_CHILD | WS_VISIBLE | ES_LEFT | ES_AUTOHSCROLL,
             100, 50,               // ตำแหน่ง
             250, 25,              // ขนาด
             hwnd,
-            NULL,
+            (HMENU)EDIT_PASSWORD,
             GetModuleHandle(NULL),
             NULL
         );
@@ -80,29 +81,52 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     case WM_COMMAND:
     if (LOWORD(wParam) == BTN_OK) {
 
-        wchar_t user[100];
-        wchar_t pass[100];
+        wchar_t wuser[100]; // ตัวแปรสำหรับเก็บข้อความจากกล่อง username 100 ตัว
+        wchar_t wpass[100]; // ตัวแปรสำหรับเก็บข้อความจากกล่อง password 100 ตัว
 
-        GetWindowTextW(hEditusername, user, 100);
-        GetWindowTextW(hEditpassword, pass, 100);
+        GetWindowTextW(hEditusername, wuser, 100); //เอาข้อความใน กล่อง user ไปเก็บในตัวแปร wuser
+        GetWindowTextW(hEditpassword, wpass, 100); //เอาข้อความใน กล่อง pass ไปเก็บในตัวแปร wpass
 
-        MessageBoxW(
-            hwnd,
-            user,
-            L"คุณกรอก Username คือ",
-            MB_OK | MB_ICONINFORMATION
-        );
+// แปลง wchar_t -> string (ภาษาอังกฤษ)
+       string user(wuser, wuser + wcslen(wuser));
+       string pass(wpass, wpass + wcslen(wpass));
+
+
+
+        ifstream file("userandpass.txt"); //เปิดไฟล์ อ่านข้อมูล username และ password
+        bool found = false;
+        if(!file.is_open()) { //ถ้าเปิดไฟล์ไม่ได้ ให้แสดงข้อความ error
+            MessageBoxW(hwnd, L"Could not open userandpass.txt", L"Error", MB_OK | MB_ICONERROR);
+            return 0;
+        }
+        string userline ,passline; //ตัวแปรสำหรับเก็บข้อมูล username และ password ที่อ่านจากไฟล์
+        while(file>> userline >> passline) {//อ่านข้อมูลจากไฟล์ทีละบรรทัด จนกว่าจะหมดไฟล์ เก็ขไว้ใน userline เเละ passline
+            
+            if (user == userline && pass == passline) { //check login
+                found = true;
+                break;
+            }
+        }
+        file.close();
+        if (found) {//ถ้าเจอ username และ password ที่ตรงกันในไฟล์ ให้แสดงข้อความ login success
+            MessageBoxW(hwnd, L"Login Success!", L"Success", MB_OK | MB_ICONINFORMATION); 
+        } else {//ถ้าไม่เจอ username และ password ที่ตรงกันในไฟล์ ให้แสดงข้อความ login failed
+            MessageBoxW(hwnd, L"Login Failed!", L"Failed", MB_OK | MB_ICONERROR);
+        }
+
+       
+
     }
     return 0;
       
 
     
     
-        case WM_DESTROY:
+        case WM_DESTROY: //ถ้าโปรแกรมถูกปิด ให้ส่งข้อความ quit เพื่อออกจากโปรแกรม
             PostQuitMessage(0);
             return 0;}
     
-    return DefWindowProc(hwnd, msg, wParam, lParam);}
+    return DefWindowProc(hwnd, msg, wParam, lParam);} 
 
 
 
