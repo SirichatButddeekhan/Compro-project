@@ -1,7 +1,0 @@
-1,Padthai,40,true,Shrimp
-2,Fried Rice,35,true,Pork
-3,Tomyum,45,false,squid
-4,Somtum,55,true,papaya
-5,PadKrapow,70,false,beef
-6,Chicken,200,true,slow cook
-7,Fried Egg,8,true,delicious
