@@ -5,33 +5,25 @@
 #include "cart_service.h"
 
 CartSystem::CartSystem(){
-    cart = { //ไว้ทดสอบดูเฉยๆ
-            { {1,  L"Hamburger",        89.00},  2 },
-            { {2,  L"Cheese Burger",    99.00},  1 },
-            { {3,  L"French Fries",     59.00},  3 },
-            { {4,  L"Fried Chicken",   129.00},  2 },
-            { {5,  L"Pizza Hawaiian",  199.00},  1 },
-            { {6,  L"Spaghetti",       149.00},  2 },
-            { {7,  L"Steak",           259.00},  1 },
-            { {8,  L"Salad",            79.00},  4 },
-            { {9,  L"Hotdog",           69.00},  2 },
-            { {10, L"Chicken Nuggets",  89.00},  3 },
-            { {11, L"Fish and Chips",  179.00},  1 },
-            { {12, L"Taco",             99.00},  2 },
-            { {13, L"Burrito",         119.00},  1 },
-            { {14, L"Fried Rice",       89.00},  3 },
-            { {15, L"Pad Thai",         99.00},  2 },
-            { {16, L"Tom Yum Soup",    129.00},  1 },
-            { {17, L"Green Curry",     139.00},  2 },
-            { {18, L"Iced Tea",         39.00},  5 },
-            { {19, L"Soft Drink",       29.00},  4 },
-            { {20, L"Ice Cream",        49.00},  3 } };
+    cart = {
+        { {1,L"Hamburger",89.00}, 1 },           { {2,L"Cheese Burger",99.00}, 2 },    { {3,L"French Fries",59.00}, 1 }, 
+        { {4,L"Fried Chicken",129.00}, 3 },      { {5,L"Hotdog",69.00}, 2 },           { {6,L"Pizza Pepperoni",199.00}, 1 }, 
+        { {7,L"Spaghetti Carbonara",149.00},2 }, { {8,L"Grilled Salmon",229.00}, 1 },  { {9,L"Steak",259.00}, 2 }, 
+        { {10,L"Caesar Salad",89.00}, 1 },       { {11,L"Chicken Nuggets",89.00}, 3 }, { {12,L"Fish and Chips",179.00}, 1 }, 
+        { {13,L"Taco",99.00}, 2 },               { {14,L"Burrito",119.00}, 1 },        { {15,L"Pad Thai",99.00}, 2 },
+        { {16,L"Fried Rice",89.00}, 1 },         { {17,L"Tom Yum Soup",129.00}, 1 },   { {18,L"Green Curry",139.00}, 2 }, 
+        { {19,L"Massaman Curry",149.00}, 1 },    { {20,L"BBQ Ribs",249.00}, 2 },       { {21,L"Club Sandwich",109.00}, 1 }, 
+        { {22,L"Onion Rings",59.00}, 3 },        { {23,L"Garlic Bread",49.00}, 2 },    { {24,L"Pancakes",79.00}, 1 }, 
+        { {25,L"Waffles",89.00}, 2 },            { {26,L"Iced Tea",39.00}, 4 },        { {27,L"Soft Drink",29.00}, 5 }, 
+        { {28,L"Orange Juice",49.00}, 2 },       { {29,L"Latte",69.00}, 1 },           { {30,L"Ice Cream",59.00}, 3 }
+    };
 }
 
 //ประกาศตัวแปร พวกข้อความ , ปุ่ม
 HWND textTitleMenu, buttonShowCart, buttonAdd;
 HWND textTitleCart, buttonBack_cart, buttonReciept_cart, borderTable;
 HWND textTotal, headID, headName, headQty, headPrice, textEmpty, allTotal;
+HWND receiptWindow = NULL;
 
 PageManage pageManager; //ประกาศตัวแปร ระบบ page
 CartSystem cartSystem; //ประกาศตัวแปร ระบบ cart
@@ -39,12 +31,15 @@ vector<CartTable> cartTable; //เอาตารางต่างๆไปไ�
 WNDPROC oldBorderProc;   // เก็บของเดิมไว้
 
 int scrollPosition = 0;
-int maxScroll = 0; 
+int maxScroll = 0;
 
 // forward declaration
 LRESULT CALLBACK BorderProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-//ระบบ page
+//callback ของไอใบเสร็จ
+LRESULT CALLBACK ReceiptProc(HWND, UINT, WPARAM, LPARAM);
+
+//ระบบ page-----------------------------------------------------------------------
 PageManage::PageManage(){ //กำหนดค่าหน้าเป็นเริ่มต้น
     currentPage = menu_page;
 }
@@ -136,7 +131,8 @@ void startCartPage(HWND hwnd){
         hwnd,NULL,NULL,NULL);
 }
 
-//---------------เดี๋ยวใช้ของต๊อปในการแสดงหน้านี้--------------------
+
+//-----------------------------เดี๋ยวใช้ของต๊อปในการแสดงหน้านี้---------------------------
 void showMenuPage(){ //แสดงสิ่งต่างๆในหน้า menu
     //แสดงข้อความและปุ่มของหน้า menu
     ShowWindow(textTitleMenu, SW_SHOW);
@@ -163,9 +159,11 @@ void showMenuPage(){ //แสดงสิ่งต่างๆในหน้า
     //set หน้าให้เป็น menu
     pageManager.setPage(pageManager.menu_page);
 }
-//------------------------------------------------------------
+//--------------------------------------------------------------------------------
 
-void showCartPage(HWND hwnd){ //แสดงสิ่งต่างๆในหน้า cart
+
+//แสดงสิ่งต่างๆในหน้า cart
+void showCartPage(HWND hwnd){ 
     //ซ่อนข้อความและปุ่มของหน้า menu
     ShowWindow(textTitleMenu, SW_HIDE);
     ShowWindow(buttonShowCart, SW_HIDE);
@@ -194,7 +192,53 @@ void showCartPage(HWND hwnd){ //แสดงสิ่งต่างๆในห
 }
 
 
-//ระบบ cart system
+//ระบบแสดงหน้าใบเสร็จ
+void showReceipt(HWND parent){
+
+    HINSTANCE hInstance = (HINSTANCE)GetWindowLongPtr(parent, GWLP_HINSTANCE);
+
+    WNDCLASSEX wc;
+    memset(&wc,0,sizeof(wc));
+    wc.cbSize = sizeof(WNDCLASSEX);
+    wc.lpfnWndProc = ReceiptProc;
+    wc.hInstance = hInstance;
+    wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+    wc.hbrBackground = CreateSolidBrush(RGB(255,255,255));
+    wc.lpszClassName = L"ReceiptWindow";
+
+    RegisterClassExW(&wc);
+
+    int receiptWidth = 400;
+
+    int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+    int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+
+    // ให้สูงไม่เกินจอ
+    int receiptHeight = 700;
+
+    int x = (screenWidth - receiptWidth)/2;
+    int y = (screenHeight - receiptHeight)/2;
+
+    HWND receipt = CreateWindowExW(
+        0,
+        L"ReceiptWindow",
+        L"Receipt",
+        WS_CAPTION | WS_VSCROLL,   // มี title bar + scroll
+        x,y,
+        receiptWidth,receiptHeight,
+        parent,
+        NULL,
+        hInstance,
+        NULL
+    );
+
+    ShowWindow(receipt, SW_SHOW);
+}
+//--------------------------------------------------------------------------------
+
+
+
+//ระบบ cart system-----------------------------------------------------------------
 void CartSystem::addToCart(MenuItem m){
     for(int i = 0; i < cart.size(); i++){
         if(cart[i].item.id == m.id){
@@ -231,9 +275,11 @@ double CartSystem::calculate(){
 vector<CartItem>& CartSystem::getCart(){
     return cart;
 }
+//--------------------------------------------------------------------------------
 
 
-//ระบบแสดงตาราง
+
+//ระบบแสดงตาราง-------------------------------------------------------------------
 void clearCartRows(){
     for(int i=0;i<cartTable.size();i++){
         DestroyWindow(cartTable[i].textId);
@@ -246,6 +292,7 @@ void clearCartRows(){
     cartTable.clear();
 }
 
+//แสดงตารางหน้า cart
 void showCartItem(HWND hwnd){
     clearCartRows(); //เตลียร์ก่อน
     vector<CartItem> &cart = cartSystem.getCart(); //เอาของใน cart มา
@@ -336,9 +383,11 @@ void showCartItem(HWND hwnd){
         SetScrollPos(borderTable, SB_VERT, 0, TRUE);
     }
 }
+//--------------------------------------------------------------------------------
 
 
-//ฟังก์ชันจัดการขนาดและตำแหน่ง
+
+//ฟังก์ชันจัดการขนาดและตำแหน่ง--------------------------------------------------------
 void resizeControl(HWND hwnd, int width, int height){
     int centerTitle_X = (width - 300)/2; //ทำให้ส่วนหัวอยู่ตรงกลาง
 
@@ -361,8 +410,11 @@ void resizeControl(HWND hwnd, int width, int height){
         MoveWindow(buttonReciept_cart,width-200-100,button_back_y,200,50,TRUE);
     }
 }
+//--------------------------------------------------------------------------------
 
 
+
+//สำหรับ cart ไว้แปลงปุ่มให้มันใช้งานได้--------------------------------------------------
 LRESULT CALLBACK BorderProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     if(msg == WM_COMMAND)
@@ -374,6 +426,186 @@ LRESULT CALLBACK BorderProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
     return CallWindowProc(oldBorderProc, hwnd, msg, wParam, lParam);
 }
+//--------------------------------------------------------------------------------
+
+
+
+//สำหรับใบเสร็จเป็นหน้าต่างใหม่---------------------------------------------------------
+int receiptScroll = 0;
+int receiptMaxScroll = 0;
+
+LRESULT CALLBACK ReceiptProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+    static HWND exitButton;
+    static vector<CartItem> receiptCart;
+
+    switch(msg)
+    {
+        case WM_CREATE:
+        {
+            receiptCart = cartSystem.getCart();
+
+            int y = 20;
+
+            CreateWindowW(L"STATIC",L"Purchase Order",
+                WS_VISIBLE|WS_CHILD|SS_CENTER|SS_CENTERIMAGE|WS_BORDER,
+                0,y,380,40,
+                hwnd,NULL,NULL,NULL);
+
+            y += 60;
+
+            int colID = 50;
+            int colName = 120;
+            int colQty = 50;
+            int colPrice = 70;
+            int colTotal = 90;
+
+            CreateWindowW(L"STATIC",L"ID",
+                WS_VISIBLE|WS_CHILD|SS_CENTER|SS_CENTERIMAGE|WS_BORDER,
+                0,y,colID,30,hwnd,NULL,NULL,NULL);
+
+            CreateWindowW(L"STATIC",L"Name",
+                WS_VISIBLE|WS_CHILD|SS_CENTER|SS_CENTERIMAGE|WS_BORDER,
+                colID,y,colName,30,hwnd,NULL,NULL,NULL);
+
+            CreateWindowW(L"STATIC",L"Qty",
+                WS_VISIBLE|WS_CHILD|SS_CENTER|SS_CENTERIMAGE|WS_BORDER,
+                colID+colName,y,colQty,30,hwnd,NULL,NULL,NULL);
+
+            CreateWindowW(L"STATIC",L"Price",
+                WS_VISIBLE|WS_CHILD|SS_CENTER|SS_CENTERIMAGE|WS_BORDER,
+                colID+colName+colQty,y,colPrice,30,hwnd,NULL,NULL,NULL);
+
+            CreateWindowW(L"STATIC",L"Total",
+                WS_VISIBLE|WS_CHILD|SS_CENTER|SS_CENTERIMAGE|WS_BORDER,
+                colID+colName+colQty+colPrice,y,colTotal,30,hwnd,NULL,NULL,NULL);
+
+            y += 40;
+
+            wchar_t buffer[200];
+
+            int i;
+            for(i=0;i<receiptCart.size();i++)
+            {
+                int itemY = y + (i*35);
+
+                wsprintf(buffer,L"%d",receiptCart[i].item.id);
+                CreateWindowW(L"STATIC",buffer,
+                    WS_VISIBLE|WS_CHILD|SS_CENTER|SS_CENTERIMAGE,
+                    0,itemY,colID,30,hwnd,NULL,NULL,NULL);
+
+                CreateWindowW(L"STATIC",receiptCart[i].item.name.c_str(),
+                    WS_VISIBLE|WS_CHILD|SS_CENTER|SS_CENTERIMAGE,
+                    colID,itemY,colName,30,hwnd,NULL,NULL,NULL);
+
+                wsprintf(buffer,L"%d",receiptCart[i].quantity);
+                CreateWindowW(L"STATIC",buffer,
+                    WS_VISIBLE|WS_CHILD|SS_CENTER|SS_CENTERIMAGE,
+                    colID+colName,itemY,colQty,30,hwnd,NULL,NULL,NULL);
+
+                swprintf(buffer,200,L"%.2f",receiptCart[i].item.price);
+                CreateWindowW(L"STATIC",buffer,
+                    WS_VISIBLE|WS_CHILD|SS_CENTER|SS_CENTERIMAGE,
+                    colID+colName+colQty,itemY,colPrice,30,hwnd,NULL,NULL,NULL);
+
+                double total = receiptCart[i].item.price * receiptCart[i].quantity;
+                swprintf(buffer,200,L"%.2f",total);
+                CreateWindowW(L"STATIC",buffer,
+                    WS_VISIBLE|WS_CHILD|SS_CENTER|SS_CENTERIMAGE,
+                    colID+colName+colQty+colPrice,itemY,colTotal,30,hwnd,NULL,NULL,NULL);
+            }
+
+            y += receiptCart.size()*35 + 20;
+
+            swprintf(buffer,200,L"Grand Total : %.2f",cartSystem.calculate());
+            CreateWindowW(L"STATIC",buffer,
+                WS_VISIBLE|WS_CHILD|SS_CENTER|SS_CENTERIMAGE|WS_BORDER,
+                0,y,380,40,hwnd,NULL,NULL,NULL);
+
+            y += 60;
+
+            exitButton = CreateWindowW(L"BUTTON",L"Exit",
+                WS_VISIBLE|WS_CHILD|BS_CENTER|WS_BORDER,
+                (380-150)/2,y,150,40,
+                hwnd,(HMENU)1,NULL,NULL);
+
+            y += 60;
+
+            // คำนวณความสูงหน้าต่างจริง
+            RECT rect;
+            GetClientRect(hwnd, &rect);
+            int clientHeight = rect.bottom;
+            
+            // คำนวณ scroll สูงสุด
+            receiptMaxScroll = y - clientHeight;
+            if(receiptMaxScroll < 0) receiptMaxScroll = 0;
+            
+            // ตั้งค่า scroll bar
+            SCROLLINFO si;
+            si.cbSize = sizeof(si);
+            si.fMask = SIF_RANGE | SIF_PAGE | SIF_POS;
+            si.nMin = 0;
+            si.nMax = y;
+            si.nPage = clientHeight;
+            si.nPos = 0;
+            
+            SetScrollInfo(hwnd, SB_VERT, &si, TRUE);
+
+            break;
+        }
+
+        case WM_VSCROLL: {
+            int oldScroll = receiptScroll;
+            
+            switch(LOWORD(wParam)){
+                case SB_LINEUP: receiptScroll -= 40; break;
+                case SB_LINEDOWN: receiptScroll += 40; break;
+                case SB_THUMBTRACK: {
+                    SCROLLINFO si;
+                    si.cbSize = sizeof(si);
+                    si.fMask = SIF_TRACKPOS;
+                    GetScrollInfo(hwnd, SB_VERT, &si);
+                    receiptScroll = si.nTrackPos;
+                    break;
+                }
+            }
+            
+            if(receiptScroll < 0) receiptScroll = 0;
+            if(receiptScroll > receiptMaxScroll) receiptScroll = receiptMaxScroll;
+            
+            SetScrollPos(hwnd, SB_VERT, receiptScroll, TRUE);
+            
+            int delta = oldScroll - receiptScroll;
+            ScrollWindow(hwnd, 0, delta, NULL, NULL);
+            UpdateWindow(hwnd);
+            
+            break;
+        }
+
+        case WM_SYSCOMMAND: {
+            if((wParam & 0xFFF0) == SC_CLOSE) return 0;
+            break;
+        }
+
+        case WM_COMMAND:
+        {
+            if(LOWORD(wParam) == 1){
+                PostQuitMessage(0);
+            }
+            break;
+        }
+
+        case WM_CLOSE:
+            return 0;
+
+        case WM_DESTROY:
+            return 0;
+    }
+
+    return DefWindowProc(hwnd,msg,wParam,lParam);
+}
+//--------------------------------------------------------------------------------
+
 
 
 /* This is where all the input to the window goes to */
@@ -412,7 +644,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
                     break;
                 }
                 case 3: { //ปุ่ม โชว์ใบเสร็จ
-                    
+                    if(cartSystem.getCart().empty()){
+                        MessageBoxW(hwnd,L"---------------------------------------------\n\nYour cart is empty!!\n\nPlease select item before.\n\n---------------------------------------------", 
+                            L"Warning!!", 
+                            MB_OK);
+                    }
+                    else showReceipt(hwnd);
                     break;
                 }
                 case 99: { //ปุ่ม add

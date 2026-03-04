@@ -63,3 +63,5 @@ void resizeControl(HWND, int, int);
 
 void clearCartRows();
 void showCartItem(HWND);
+
+void showReceipt(HWND);
