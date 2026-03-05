@@ -3,12 +3,14 @@
 #include <sstream>
 #include <locale>
 #include <codecvt>
-
+#include <vector>
+#include <string>
+#include"cart_ui.h"
 std::vector<MenuItem> menu;
 std::vector<HWND> addButtons;
 int scrollOffset = 0;
-bool showCartPage = false;
 HWND hCartButton = NULL;
+bool isCartOpen = false;
 
 // ================= LOAD CSV =================
 void LoadMenuData() {
@@ -180,6 +182,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg,
             hwnd, (HMENU)BTN_CART,
             NULL, NULL);
 
+       startCartPage(hwnd);
+
+        hideCartPage();
+
+        showMenuPage(hwnd);
+
         UpdateScrollBar(hwnd);
         break;
 
@@ -197,6 +205,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg,
 
     case WM_MOUSEWHEEL:
     {
+         if(isCartOpen){
+            SendMessage(borderTable, WM_MOUSEWHEEL, wParam, lParam);
+            return 0;
+        }
         RECT rc;
         GetClientRect(hwnd, &rc);
 
@@ -213,7 +225,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg,
     break;
 
     case WM_VSCROLL:
-    {
+    {     if(isCartOpen){
+            SendMessage(borderTable, WM_VSCROLL, wParam, lParam);
+            return 0;
+        }
+
         SCROLLINFO si{};
         si.cbSize = sizeof(si);
         si.fMask = SIF_ALL;
@@ -243,14 +259,29 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg,
     {
         int id = LOWORD(wParam);
 
+      
         if (id == BTN_CART) {
-            showCartPage = !showCartPage;
+            isCartOpen = true;
+            
+            showCartPage(hwnd);   //เรียกหน้า cart
+
+            ShowWindow(hCartButton, SW_HIDE);   //ซ่อนปุ่ม cart
+
+            ShowScrollBar(hwnd, SB_VERT, FALSE);
+
+            // ซ่อนปุ่ม Add ของ menu
+            for(int i = 0; i < addButtons.size(); i++){
+                ShowWindow(addButtons[i], SW_HIDE);   // [เพิ่ม]
+            }
+
             InvalidateRect(hwnd, NULL, TRUE);
         }
-        else if (id >= BTN_ADD_BASE &&
+         else if (id >= BTN_ADD_BASE &&
                  id < BTN_ADD_BASE + (int)menu.size())
         {
             int index = id - BTN_ADD_BASE;
+
+            cartSystem.addToCart(menu[index]);
 
             std::wstring msg =
                 L"Added: " + menu[index].name;
@@ -258,6 +289,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg,
             MessageBoxW(hwnd, msg.c_str(),
                         L"Cart", MB_OK);
         }
+        else cartCommand(hwnd, wParam);
     }
     break;
 
@@ -269,7 +301,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg,
         RECT rc;
         GetClientRect(hwnd, &rc);
 
-        DrawMenu(hwnd, hdc, rc);
+        if(!isCartOpen){
+            DrawMenu(hwnd, hdc, rc);
+        }
+
 
         EndPaint(hwnd, &ps);
     }
@@ -314,4 +349,19 @@ HWND CreateMenuWindow(HINSTANCE hInstance)
     UpdateWindow(hwnd);
 
     return hwnd;
+}
+void showMenuPage(HWND hwnd)
+{
+    isCartOpen = false;
+    hideCartPage();
+
+    ShowScrollBar(hwnd, SB_VERT, TRUE);
+
+    ShowWindow(hCartButton, SW_SHOW);
+
+    for(int i = 0; i < addButtons.size(); i++){
+        ShowWindow(addButtons[i], SW_SHOW);
+    }
+
+    InvalidateRect(hwnd, NULL, TRUE);
 }

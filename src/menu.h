@@ -17,12 +17,11 @@ struct MenuItem {
 // ===== global variables =====
 extern std::vector<MenuItem> menu;
 extern int scrollOffset;
-extern bool showCartPage;
 extern std::vector<HWND> addButtons;
 
 // ===== constants =====
 #define BTN_CART 500
-#define BTN_ADD_BASE 1000
+#define BTN_ADD_BASE 5000
 
 // ===== function prototypes =====
 void LoadMenuData();
