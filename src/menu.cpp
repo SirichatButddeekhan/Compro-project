@@ -14,7 +14,7 @@ HWND hCartButton = NULL;
 void LoadMenuData() {
     menu.clear();
 
-    std::wifstream file(L"menu.csv");
+    std::wifstream file(L"..//data/menu.csv");
     file.imbue(std::locale(std::locale(), new std::codecvt_utf8<wchar_t>));
 
     if (!file.is_open()) {

@@ -2,8 +2,7 @@
 #include "filemanager.h"
 #include <string>
 #include "menu.h"
-//#include "crud.h"   
-
+#include "crud.h"
 using namespace std;
 
 #define BTN_OK 1001 // รหัสสำหรับปุ่มยืนยัน
@@ -72,8 +71,11 @@ LRESULT CALLBACK LoginProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             if (user == "admin123" && pass == "555")
             {
                 MessageBoxW(hwnd, L"Admin Login Success!", L"Success", MB_OK);
+                createaccountadmin(GetModuleHandle(NULL), hwnd);
+
+                ShowWindow(hwnd, SW_HIDE);
                 return 0;
-                //CreateAdminWindow(GetModuleHandle(NULL));
+
                 
             }
             else if (checkLogin(user, pass))

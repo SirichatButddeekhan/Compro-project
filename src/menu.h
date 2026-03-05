@@ -36,4 +36,23 @@ void ShowAddButtons(bool show);
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg,
                          WPARAM wParam, LPARAM lParam);
+
 HWND CreateMenuWindow(HINSTANCE hInstance);
+
+
+
+// ===== class =====
+class Menu {
+public:
+    std::vector<MenuItem> m;
+
+    void LoadCSV(const std::string& filename);
+    bool SaveCSV(const std::string& filename);
+
+    void CREATE(const MenuItem& item);
+    void Read();
+    void Delete(int id);
+    void Update(int id, const MenuItem& newItem);
+
+    bool CheckId(int id) const;
+};
