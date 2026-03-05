@@ -27,9 +27,17 @@ struct CartTable {
     HWND textTotal;
 };
 
+extern CartSystem cartSystem;
+extern PageManage pageManager;
+extern HWND borderTable;
+
 void startCartPage(HWND); //สร้างหน้า cart
-void showMenuPage();
+void showMenuPage(HWND);
 void showCartPage(HWND);
+void cartCommand(HWND, WPARAM);
+void cartScroll(HWND, WPARAM, LPARAM);
+void cartWheel(HWND, WPARAM);
+void hideCartPage();
 
 void resizeControl(HWND, int, int);
 

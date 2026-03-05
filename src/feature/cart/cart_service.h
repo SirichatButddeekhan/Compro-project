@@ -1,13 +1,7 @@
 #include <vector>
 #include <string>
+#include "menu.h"
 using namespace std;
-
-//Data base Menu
-struct MenuItem{
-    int id;
-    wstring name;
-    double price;
-};
 
 //ตัวแปรใน Cart
 class CartItem{

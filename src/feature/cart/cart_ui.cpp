@@ -2,46 +2,7 @@
 #include <stdio.h>
 #include <iomanip>
 #include <sstream>
-#include "cart_service.h"
 #include "cart_ui.h"
-
-//window setup
-/*void InitApplication(HINSTANCE hInstance)
-{
-    WNDCLASSEX wc{};
-    wc.cbSize = sizeof(WNDCLASSEX);
-    wc.lpfnWndProc = WndProc;
-    wc.hInstance = hInstance;
-    wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-    wc.hbrBackground = CreateSolidBrush(RGB(150,175,220));
-    wc.lpszClassName = L"MainWindow";
-
-    RegisterClassExW(&wc);
-}
-
-HWND InitMainWindow(HINSTANCE hInstance, int nCmdShow)
-{
-    HWND hwnd = CreateWindowExW(
-        WS_EX_CLIENTEDGE,
-        L"MainWindow",
-        L"Open Program",
-        WS_OVERLAPPEDWINDOW,
-        CW_USEDEFAULT,
-        CW_USEDEFAULT,
-        1000,
-        600,
-        NULL,
-        NULL,
-        hInstance,
-        NULL);
-
-    ShowWindow(hwnd, nCmdShow);
-    UpdateWindow(hwnd);
-
-    return hwnd;
-}*/
-
-
 
 //ประกาศตัวแปร พวกข้อความ , ปุ่ม
 HWND textTitleMenu, buttonShowCart, buttonAdd;
@@ -88,7 +49,7 @@ void startCartPage(HWND hwnd){
 
     //ขอบของกรอบ
     borderTable = CreateWindowExW(0,L"STATIC", NULL, 
-        WS_CHILD|WS_VSCROLL|WS_CLIPCHILDREN|WS_VISIBLE, 
+        WS_CHILD|WS_VSCROLL|WS_CLIPCHILDREN, 
         100,190,1350,400, 
         hwnd,NULL,NULL,NULL);
     
@@ -137,12 +98,32 @@ void startCartPage(HWND hwnd){
         hwnd,NULL,NULL,NULL);
 }
 
+//ซ่อนหน้า cart
+void hideCartPage()
+{
+    ShowWindow(textTitleCart, SW_HIDE);
+    ShowWindow(buttonBack_cart, SW_HIDE);
+    ShowWindow(buttonReciept_cart, SW_HIDE);
+    ShowWindow(borderTable, SW_HIDE);
+
+    ShowWindow(headID, SW_HIDE);
+    ShowWindow(headName, SW_HIDE);
+    ShowWindow(headQty, SW_HIDE);
+    ShowWindow(headPrice, SW_HIDE);
+    ShowWindow(allTotal, SW_HIDE);
+
+    for(int i = 0; i < cartTable.size(); i++){
+        ShowWindow(cartTable[i].textId, SW_HIDE);
+        ShowWindow(cartTable[i].textName, SW_HIDE);
+        ShowWindow(cartTable[i].buttonMinus, SW_HIDE);
+        ShowWindow(cartTable[i].textQty, SW_HIDE);
+        ShowWindow(cartTable[i].buttonPlus, SW_HIDE);
+        ShowWindow(cartTable[i].textTotal, SW_HIDE);
+    }
+}
+
 //แสดงสิ่งต่างๆในหน้า cart
 void showCartPage(HWND hwnd){ 
-    //ซ่อนข้อความและปุ่มของหน้า menu
-    ShowWindow(textTitleMenu, SW_HIDE);
-    ShowWindow(buttonShowCart, SW_HIDE);
-    ShowWindow(buttonAdd, SW_HIDE);
 
     //แสดงข้อความและปุ่มของหน้า cart
     ShowWindow(textTitleCart, SW_SHOW);
@@ -159,6 +140,10 @@ void showCartPage(HWND hwnd){
 
     //set หน้าให้เป็น cart
     pageManager.setPage(pageManager.cart_page);
+
+    RECT rect;
+    GetClientRect(hwnd, &rect);
+    resizeControl(hwnd, rect.right, rect.bottom);
 
     scrollPosition = 0;
     SetScrollPos(borderTable, SB_VERT, scrollPosition, TRUE); //อันนี้มีการเปลี่ยนจาก hwnd เป็น borderTable เผื่อมีไรผิดแก้ที่นี่
@@ -308,7 +293,7 @@ void showCartItem(HWND hwnd){
     si.fMask = SIF_RANGE|SIF_PAGE|SIF_POS;
     si.nMin = 0;
     si.nMax = cart.size() * 40;
-    si.nPage = borderRect.bottom;
+    si.nPage = clientHeight;
     si.nPos = scrollPosition;
     SetScrollInfo(borderTable, SB_VERT, &si, TRUE);
     if(maxScroll == 0){
@@ -349,13 +334,18 @@ void resizeControl(HWND hwnd, int width, int height){
 
 //สำหรับ cart ไว้แปลงปุ่มให้มันใช้งานได้--------------------------------------------------
 LRESULT CALLBACK BorderProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
-    if(msg == WM_COMMAND)
-    {
-        // ส่งต่อไปยัง main window
+    if(msg == WM_COMMAND){
         SendMessage(GetParent(hwnd), WM_COMMAND, wParam, lParam);
         return 0;
     }
-
+    if(msg == WM_VSCROLL){
+        cartScroll(GetParent(hwnd), wParam, (LPARAM)hwnd);
+        return 0;
+    }
+    if(msg == WM_MOUSEWHEEL){
+        cartWheel(GetParent(hwnd), wParam);
+        return 0;
+    }
     return CallWindowProc(oldBorderProc, hwnd, msg, wParam, lParam);
 }
 //--------------------------------------------------------------------------------
@@ -538,189 +528,95 @@ LRESULT CALLBACK ReceiptProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
 //--------------------------------------------------------------------------------
 
 
-
-/* This is where all the input to the window goes to */
-LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) {
-    switch(Message) {
-       
-        case WM_CREATE: {
-            startCartPage(hwnd);
-            showMenuPage();
-            break;
-        }
-
-        case WM_SIZE: { //เปลี่ยนขนาดและตำแหน่งของกล่องข้อความ , ปุ่ม
+void cartCommand(HWND hwnd, WPARAM wParam){
+    switch (LOWORD(wParam)){
+        case 1: { //ปุ่ม แสดงรถเข็น
+            showCartPage(hwnd);
             RECT rect; //ประกาศตัวแปรของ struc RECT ที่เก็บพิกัดของ window
             GetClientRect(hwnd, &rect); //ฟังก์ชันเอาขนาดพื้นที่ด้านในของ window ไม่รวม title bar
             resizeControl(hwnd, rect.right, rect.bottom); //rect.right : ความกว้าง , rect.bottom : ความสูง
             break;
         }
-
-        case WM_COMMAND: {
-
-            switch (LOWORD(wParam)){
-                case 1: { //ปุ่ม แสดงรถเข็น
-                    showCartPage(hwnd);
-                    RECT rect; //ประกาศตัวแปรของ struc RECT ที่เก็บพิกัดของ window
-                    GetClientRect(hwnd, &rect); //ฟังก์ชันเอาขนาดพื้นที่ด้านในของ window ไม่รวม title bar
-                    resizeControl(hwnd, rect.right, rect.bottom); //rect.right : ความกว้าง , rect.bottom : ความสูง
-                    break;
-                }
-                case 2: { //ปุ่ม ย้อนหลับ
-                    showMenuPage();
-                    RECT rect; //ประกาศตัวแปรของ struc RECT ที่เก็บพิกัดของ window
-                    GetClientRect(hwnd, &rect); //ฟังก์ชันเอาขนาดพื้นที่ด้านในของ window ไม่รวม title bar
-                    resizeControl(hwnd, rect.right, rect.bottom); //rect.right : ความกว้าง , rect.bottom : ความสูง
-                    break;
-                }
-                case 3: { //ปุ่ม โชว์ใบเสร็จ
-                    if(cartSystem.getCart().empty()){
-                        MessageBoxW(hwnd,L"---------------------------------------------\n\nYour cart is empty!!\n\nPlease select item before.\n\n---------------------------------------------", 
-                            L"Warning!!", 
-                            MB_OK);
-                    }
-                    else showReceipt(hwnd);
-                    break;
-                }
-                case 99: { //ปุ่ม add
-
-                    break;
-                }
-                default: {
-                    int idButton = LOWORD(wParam);
-                    if(idButton >= 1000 && idButton < 2000){ //ปุ่ม -
-                        int id = idButton - 1000;
-                        cartSystem.removeFromCart(id);
-                        showCartItem(hwnd);
-                    }
-                    else if(idButton >= 2000){ //ปุ่ม +
-                        int id = idButton - 2000;
-                        vector<CartItem> &cart = cartSystem.getCart();
-                        for(int i = 0; i < cart.size(); i++){
-                            if(cart[i].item.id == id){
-                                cartSystem.addToCart(cart[i].item);
-                                break;
-                            }
-                        }
-                        showCartItem(hwnd);
-                    }
-                    break;
-                }
-            }
-
+        case 2: { //ปุ่ม ย้อนหลับ
+            showMenuPage(hwnd);
+            RECT rect; //ประกาศตัวแปรของ struc RECT ที่เก็บพิกัดของ window
+            GetClientRect(hwnd, &rect); //ฟังก์ชันเอาขนาดพื้นที่ด้านในของ window ไม่รวม title bar
+            resizeControl(hwnd, rect.right, rect.bottom); //rect.right : ความกว้าง , rect.bottom : ความสูง
             break;
         }
-
-        //การเลื่อนจอ
-        case WM_VSCROLL: {
-            if((HWND)lParam == borderTable){
-                switch(LOWORD(wParam)){
-                    case SB_LINEUP: {
-                        scrollPosition -= 40;
-                        break;
-                    }
-                    case SB_LINEDOWN:{
-                        scrollPosition += 40;
-                        break;
-                    }
-                    case SB_THUMBTRACK:{
-                        SCROLLINFO si;
-                        si.cbSize = sizeof(si);
-                        si.fMask = SIF_TRACKPOS;
-                        GetScrollInfo(borderTable, SB_VERT, &si);
-                        scrollPosition = si.nTrackPos;
+        case 3: { //ปุ่ม โชว์ใบเสร็จ
+            if(cartSystem.getCart().empty()){
+                MessageBoxW(hwnd,L"---------------------------------------------\n\nYour cart is empty!!\n\nPlease select item before.\n\n---------------------------------------------", 
+                    L"Warning!!", 
+                    MB_OK);
+            }
+            else showReceipt(hwnd);
+            
+            break;
+        }
+        default: {
+            int idButton = LOWORD(wParam);
+            if(idButton >= 1000 && idButton < 2000){ //ปุ่ม -
+                int id = idButton - 1000;
+                cartSystem.removeFromCart(id);
+                showCartItem(hwnd);
+            }
+            else if(idButton >= 2000){ //ปุ่ม +
+                int id = idButton - 2000;
+                vector<CartItem> &cart = cartSystem.getCart();
+                for(int i = 0; i < cart.size(); i++){
+                    if(cart[i].item.id == id){
+                        cartSystem.addToCart(cart[i].item);
                         break;
                     }
                 }
-                
-                if(scrollPosition < 0) scrollPosition = 0;
-                if(scrollPosition > maxScroll) scrollPosition = maxScroll;
-                
-                SetScrollPos(borderTable,SB_VERT,scrollPosition,TRUE);
                 showCartItem(hwnd);
             }
             break;
         }
-
-        case WM_MOUSEWHEEL: {
-            int delta = GET_WHEEL_DELTA_WPARAM(wParam);
-
-            if(delta > 0) scrollPosition -= 40;
-            else scrollPosition += 40;
-
-            if(scrollPosition < 0) scrollPosition = 0;
-            if(scrollPosition > maxScroll) scrollPosition = maxScroll;
-
-            SetScrollPos(borderTable, SB_VERT, scrollPosition, TRUE);
-            showCartItem(hwnd);
-            break;
-        }
-
-        /* Upon destruction, tell the main thread to stop */
-        case WM_DESTROY: {
-            PostQuitMessage(0);
-            break;
-        }
-       
-        /* All other messages (a lot of them) are processed using default procedures */
-        default:
-            return DefWindowProc(hwnd, Message, wParam, lParam);
     }
-    return 0;
 }
 
 
-
-// The 'main' function of Win32 GUI programs: this is where execution starts
-/*
-int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow) {
-    WNDCLASSEX wc; // A properties struct of our window
-    HWND hwnd; // A 'HANDLE', hence the H, or a pointer to our window
-    MSG msg; // A temporary location for all messages
-
-    // zero out the struct and set the stuff we want to modify
-    memset(&wc,0,sizeof(wc));
-    wc.cbSize    = sizeof(WNDCLASSEX);
-    wc.lpfnWndProc   = WndProc; // This is where we will send messages to 
-    wc.hInstance     = hInstance;
-    wc.hCursor   = LoadCursor(NULL, IDC_ARROW);
-   
-    // White, COLOR_WINDOW is just a #define for a system color, try Ctrl+Clicking it 
-    wc.hbrBackground = CreateSolidBrush(RGB(150,175,220));
-    wc.lpszClassName = L"WindowClass";
-    wc.hIcon     = LoadIcon(NULL, IDI_APPLICATION); // Load a standard icon 
-    wc.hIconSm   = LoadIcon(NULL, IDI_APPLICATION); // use the name "A" to use the project icon
-
-    if(!RegisterClassExW(&wc)) {
-        MessageBox(NULL, L"Window Registration Failed!",L"Error!",MB_ICONEXCLAMATION|MB_OK);
-        return 0;
+void cartScroll(HWND hwnd, WPARAM wParam, LPARAM lParam){
+    if((HWND)lParam == borderTable){
+        switch(LOWORD(wParam)){
+            case SB_LINEUP: {
+                scrollPosition -= 40;
+                break;
+            }
+            case SB_LINEDOWN:{
+                scrollPosition += 40;
+                break;
+            }
+            case SB_THUMBTRACK:{
+                SCROLLINFO si;
+                si.cbSize = sizeof(si);
+                si.fMask = SIF_TRACKPOS;
+                GetScrollInfo(borderTable, SB_VERT, &si);
+                scrollPosition = si.nTrackPos;
+                break;
+            }
+        }
+                
+        if(scrollPosition < 0) scrollPosition = 0;
+        if(scrollPosition > maxScroll) scrollPosition = maxScroll;
+                
+        SetScrollPos(borderTable,SB_VERT,scrollPosition,TRUE);
+        showCartItem(hwnd);
     }
-
-    hwnd = CreateWindowExW(WS_EX_CLIENTEDGE,L"WindowClass",L"Open Program", 
-        WS_OVERLAPPEDWINDOW | WS_SYSMENU | WS_MINIMIZEBOX,
-        CW_USEDEFAULT, // x 
-        CW_USEDEFAULT, // y
-        800, // width 
-        450, // height 
-        NULL,NULL,hInstance,NULL);
-
-    ShowWindow(hwnd, SW_MAXIMIZE);
-    UpdateWindow(hwnd);
-
-    if(hwnd == NULL) {
-        MessageBox(NULL, L"Window Creation Failed!",L"Error!",MB_ICONEXCLAMATION|MB_OK);
-        return 0;
-    }
-
-    
-        // This is the heart of our program where all input is processed and
-        // sent to WndProc. Note that GetMessage blocks code flow until it receives something, so
-        // this loop will not produce unreasonably high CPU usage
-    
-    while(GetMessage(&msg, NULL, 0, 0) > 0) { // If no error is received... 
-        TranslateMessage(&msg); // Translate key codes to chars if present 
-        DispatchMessage(&msg); // Send it to WndProc 
-    }
-    return msg.wParam;
 }
-*/
+
+
+void cartWheel(HWND hwnd, WPARAM wParam){
+    int delta = GET_WHEEL_DELTA_WPARAM(wParam);
+
+    if(delta > 0) scrollPosition -= 40;
+    else scrollPosition += 40;
+
+    if(scrollPosition < 0) scrollPosition = 0;
+    if(scrollPosition > maxScroll) scrollPosition = maxScroll;
+
+    SetScrollPos(borderTable, SB_VERT, scrollPosition, TRUE);
+    showCartItem(hwnd);
+}
