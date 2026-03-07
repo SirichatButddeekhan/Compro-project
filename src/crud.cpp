@@ -143,13 +143,20 @@ case WM_CREATE:
     switch (LOWORD(wParam))
     {
     case 1:
-    CreateWindowExW(
+{
+    int screenW = GetSystemMetrics(SM_CXSCREEN);
+    int screenH = GetSystemMetrics(SM_CYSCREEN);
+
+    HWND h = CreateWindowExW(
         WS_EX_CLIENTEDGE, L"WindowClass", L"CREATE MENU",
         WS_OVERLAPPEDWINDOW | WS_VISIBLE,
-        300, 200, 500, 300,
+        0, 0, screenW, screenH,
         NULL, NULL, GetModuleHandle(NULL),
         (LPVOID)1
     );
+
+    ShowWindow(h, SW_MAXIMIZE);
+}
 break;
 
     case BTN_CREATE:
