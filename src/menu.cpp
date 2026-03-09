@@ -345,7 +345,7 @@ HWND CreateMenuWindow(HINSTANCE hInstance)
         hInstance,
         NULL);
 
-    ShowWindow(hwnd, SW_SHOW);
+    ShowWindow(hwnd, SW_MAXIMIZE);
     UpdateWindow(hwnd);
 
     return hwnd;

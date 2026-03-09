@@ -143,7 +143,7 @@ HWND CreateLoginWindow(HINSTANCE hInstance, int nCmdShow)
         400, 300,
         NULL, NULL, hInstance, NULL);
 
-    ShowWindow(hwnd, nCmdShow);
+    ShowWindow(hwnd, SW_MAXIMIZE);
     UpdateWindow(hwnd);
 
     return hwnd;
