@@ -235,6 +235,7 @@ void showCartItem(HWND hwnd){
         SetWindowText(allTotal,L"TOTAL : 0.00");
         return;
     }
+    else ShowWindow(textEmpty,SW_HIDE);
 
     for(int i = 0; i < cart.size(); i++){ //มีของในตะกร้าแสดงของ
         int y = (i * 40) - scrollPosition;
@@ -503,6 +504,26 @@ LRESULT CALLBACK ReceiptProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
             break;
         }
 
+        case WM_MOUSEWHEEL: {
+            int oldScroll = receiptScroll;
+
+            int delta = GET_WHEEL_DELTA_WPARAM(wParam);
+
+            if(delta > 0) receiptScroll -= 40;
+            else receiptScroll += 40;
+
+            if(receiptScroll < 0) receiptScroll = 0;
+            if(receiptScroll > receiptMaxScroll) receiptScroll = receiptMaxScroll;
+
+            SetScrollPos(hwnd, SB_VERT, receiptScroll, TRUE);
+
+            int move = oldScroll - receiptScroll;
+            ScrollWindow(hwnd, 0, move, NULL, NULL);
+            UpdateWindow(hwnd);
+
+            break;
+        }
+
         case WM_SYSCOMMAND: {
             if((wParam & 0xFFF0) == SC_CLOSE) return 0;
             break;
@@ -579,32 +600,43 @@ void cartCommand(HWND hwnd, WPARAM wParam){
 
 
 void cartScroll(HWND hwnd, WPARAM wParam, LPARAM lParam){
-    if((HWND)lParam == borderTable){
-        switch(LOWORD(wParam)){
-            case SB_LINEUP: {
-                scrollPosition -= 40;
-                break;
-            }
-            case SB_LINEDOWN:{
-                scrollPosition += 40;
-                break;
-            }
-            case SB_THUMBTRACK:{
-                SCROLLINFO si;
-                si.cbSize = sizeof(si);
-                si.fMask = SIF_TRACKPOS;
-                GetScrollInfo(borderTable, SB_VERT, &si);
-                scrollPosition = si.nTrackPos;
-                break;
-            }
-        }
-                
-        if(scrollPosition < 0) scrollPosition = 0;
-        if(scrollPosition > maxScroll) scrollPosition = maxScroll;
-                
-        SetScrollPos(borderTable,SB_VERT,scrollPosition,TRUE);
-        showCartItem(hwnd);
+
+    SCROLLINFO si;
+    si.cbSize = sizeof(SCROLLINFO);
+    si.fMask = SIF_ALL;
+    GetScrollInfo(borderTable, SB_VERT, &si);
+
+    switch(LOWORD(wParam)){
+
+        case SB_LINEUP:
+            scrollPosition -= 40;
+            break;
+
+        case SB_LINEDOWN:
+            scrollPosition += 40;
+            break;
+
+        case SB_PAGEUP:
+            scrollPosition -= si.nPage;
+            break;
+
+        case SB_PAGEDOWN:
+            scrollPosition += si.nPage;
+            break;
+
+        case SB_THUMBTRACK:
+        case SB_THUMBPOSITION:
+            scrollPosition = si.nTrackPos;
+            break;
     }
+
+    if(scrollPosition < 0) scrollPosition = 0;
+    if(scrollPosition > maxScroll) scrollPosition = maxScroll;
+
+    si.nPos = scrollPosition;
+    SetScrollInfo(borderTable, SB_VERT, &si, TRUE);
+
+    showCartItem(hwnd);
 }
 
 

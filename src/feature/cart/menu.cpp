@@ -362,7 +362,7 @@ HWND CreateMenuWindow(HINSTANCE hInstance)
         hInstance,
         NULL);
 
-    ShowWindow(hwnd, SW_SHOW);
+    ShowWindow(hwnd, SW_MAXIMIZE);
     UpdateWindow(hwnd);
 
     return hwnd;
@@ -377,7 +377,6 @@ int WINAPI wWinMain(
     int nCmdShow)
 {
     HWND hwnd = CreateMenuWindow(hInstance);
-    ShowWindow(hwnd, SW_MAXIMIZE);
 
     MSG msg;
 
