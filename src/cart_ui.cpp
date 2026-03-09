@@ -49,7 +49,7 @@ void startCartPage(HWND hwnd){
 
     //ขอบของกรอบ
     borderTable = CreateWindowExW(0,L"STATIC", NULL, 
-        WS_CHILD|WS_VSCROLL|WS_CLIPCHILDREN, 
+        WS_CHILD|WS_VSCROLL|WS_CLIPCHILDREN|SS_NOTIFY, 
         100,190,1350,400, 
         hwnd,NULL,NULL,NULL);
     
@@ -96,6 +96,12 @@ void startCartPage(HWND hwnd){
         WS_CHILD|WS_BORDER|SS_CENTER|SS_CENTERIMAGE, 
         100,590,1333,40, 
         hwnd,NULL,NULL,NULL);
+
+    //cart empty
+    textEmpty = CreateWindowW(L"STATIC", L"Cart is empty please select item.", 
+            WS_VISIBLE|WS_CHILD|SS_CENTER|SS_CENTERIMAGE, 
+            0,200,1333,40, 
+            borderTable,NULL,NULL,NULL);
 }
 
 //ซ่อนหน้า cart
@@ -228,13 +234,10 @@ void showCartItem(HWND hwnd){
     int Price = borderWidth- (ID + Name + Qty);
 
     if(cart.size() == 0){ //ถ้าไม่มีของในตะกร้า
-        textEmpty = CreateWindowW(L"STATIC", L"Cart is empty please select item.", 
-            WS_VISIBLE|WS_CHILD|SS_CENTER|SS_CENTERIMAGE, 
-            0,200,borderWidth,40, 
-            borderTable,NULL,NULL,NULL);
+        ShowWindow(textEmpty, SW_SHOW);
         SetWindowText(allTotal,L"TOTAL : 0.00");
         return;
-    }else ShowWindow(textEmpty, SW_HIDE);
+    }else if(cart.size() != 0) ShowWindow(textEmpty, SW_HIDE);
 
     for(int i = 0; i < cart.size(); i++){ //มีของในตะกร้าแสดงของ
         int y = (i * 40) - scrollPosition;

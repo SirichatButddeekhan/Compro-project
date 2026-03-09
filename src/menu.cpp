@@ -329,7 +329,7 @@ HWND CreateMenuWindow(HINSTANCE hInstance)
     wc.hInstance = hInstance;
     wc.lpszClassName = L"MenuWindow";
     wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-    wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+    wc.hbrBackground = CreateSolidBrush(RGB(255,240,205));
     wc.style = CS_HREDRAW | CS_VREDRAW;
 
     RegisterClassExW(&wc);

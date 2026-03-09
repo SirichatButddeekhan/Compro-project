@@ -132,7 +132,7 @@ HWND CreateLoginWindow(HINSTANCE hInstance, int nCmdShow)
     wc.hInstance = hInstance;
     wc.lpszClassName = L"MyWindow";
     wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-    wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+    wc.hbrBackground = CreateSolidBrush(RGB(255,240,205));
 
     RegisterClassExW(&wc);
 
