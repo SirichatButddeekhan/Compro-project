@@ -20,12 +20,12 @@ LRESULT CALLBACK LoginProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     case WM_CREATE:
          //ป้ายชื่อ user
         hLabelUser = CreateWindowExW(0, L"STATIC", L"Username:", 
-            WS_CHILD | WS_VISIBLE, 0,0,0,0,
+            WS_CHILD | WS_VISIBLE | SS_CENTERIMAGE, 0,0,0,0,
             hwnd, NULL, GetModuleHandle(NULL), NULL);
            
             //ป้ายชื่อ password
         hLabelPass = CreateWindowExW(0, L"STATIC", L"Password:",
-            WS_CHILD | WS_VISIBLE, 0,0,0,0,
+            WS_CHILD | WS_VISIBLE | SS_CENTERIMAGE, 0,0,0,0,
             hwnd, NULL, GetModuleHandle(NULL), NULL);
             
             //ช่องกรอกชื่อผู้ใช้

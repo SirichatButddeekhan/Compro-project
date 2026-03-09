@@ -44,19 +44,19 @@ case WM_CREATE:
 
     if (mode == 1) {
 
-        CreateWindowW(L"STATIC", L"Enter ID:", WS_CHILD | WS_VISIBLE,
+        CreateWindowW(L"STATIC", L"Enter ID:", WS_CHILD | WS_VISIBLE | SS_CENTERIMAGE,
             centerX-150, centerY-120, 120, 20, hwnd, NULL, NULL, NULL);
 
         hIdEdit = CreateWindowW(L"EDIT", L"", WS_CHILD | WS_VISIBLE | WS_BORDER,
             centerX-150, centerY-100, 300, 25, hwnd, (HMENU)ID_EDIT_ID, NULL, NULL);
 
-        CreateWindowW(L"STATIC", L"Enter Name:", WS_CHILD | WS_VISIBLE,
+        CreateWindowW(L"STATIC", L"Enter Name:", WS_CHILD | WS_VISIBLE | SS_CENTERIMAGE,
             centerX-150, centerY-70, 120, 20, hwnd, NULL, NULL, NULL);
 
         hNameEdit = CreateWindowW(L"EDIT", L"", WS_CHILD | WS_VISIBLE | WS_BORDER,
             centerX-150, centerY-50, 300, 25, hwnd, (HMENU)ID_EDIT_NAME, NULL, NULL);
 
-        CreateWindowW(L"STATIC", L"Enter Price:", WS_CHILD | WS_VISIBLE,
+        CreateWindowW(L"STATIC", L"Enter Price:", WS_CHILD | WS_VISIBLE | SS_CENTERIMAGE,
             centerX-150, centerY-20, 120, 20, hwnd, NULL, NULL, NULL);
 
         hPriceEdit = CreateWindowW(L"EDIT", L"", WS_CHILD | WS_VISIBLE | WS_BORDER,
@@ -78,19 +78,19 @@ case WM_CREATE:
 
     if (mode == 3) {
 
-        CreateWindowW(L"STATIC",L"Enter ID to update:", WS_CHILD|WS_VISIBLE,
+        CreateWindowW(L"STATIC",L"Enter ID to update:", WS_CHILD|WS_VISIBLE|SS_CENTERIMAGE,
             centerX-150,centerY-120,150,20, hwnd,NULL,NULL,NULL);
 
         hUpdIdEdit = CreateWindowW(L"EDIT",L"", WS_CHILD|WS_VISIBLE|WS_BORDER,
             centerX-150,centerY-100,300,25, hwnd,(HMENU)ID_UPD_ID_EDIT,NULL,NULL);
 
-        CreateWindowW(L"STATIC",L"New Name:", WS_CHILD|WS_VISIBLE,
+        CreateWindowW(L"STATIC",L"New Name:", WS_CHILD|WS_VISIBLE|SS_CENTERIMAGE,
             centerX-150,centerY-70,150,20, hwnd,NULL,NULL,NULL);
 
         hUpdNameEdit = CreateWindowW(L"EDIT",L"", WS_CHILD|WS_VISIBLE|WS_BORDER,
             centerX-150,centerY-50,300,25, hwnd,(HMENU)ID_UPD_NAME_EDIT,NULL,NULL);
 
-        CreateWindowW(L"STATIC",L"New Price:", WS_CHILD|WS_VISIBLE,
+        CreateWindowW(L"STATIC",L"New Price:", WS_CHILD|WS_VISIBLE|SS_CENTERIMAGE,
             centerX-150,centerY-20,150,20, hwnd,NULL,NULL,NULL);
 
         hUpdPriceEdit = CreateWindowW(L"EDIT",L"", WS_CHILD|WS_VISIBLE|WS_BORDER,
@@ -104,7 +104,7 @@ case WM_CREATE:
 
     if (mode == 4) {
 
-        CreateWindowW(L"STATIC", L"DELETE BY ID:", WS_CHILD | WS_VISIBLE,
+        CreateWindowW(L"STATIC", L"DELETE BY ID:", WS_CHILD | WS_VISIBLE | SS_CENTERIMAGE,
             20, 50, 120, 20, hwnd, NULL, NULL, NULL);
 
         hDelIdEdit = CreateWindowW(L"EDIT", L"", WS_CHILD | WS_VISIBLE | WS_BORDER,
@@ -115,7 +115,7 @@ case WM_CREATE:
     }
 
     textfield = CreateWindowW(L"STATIC",L"WELCOME TO CRUD APPLICATION",
-        WS_VISIBLE | WS_CHILD | WS_BORDER,
+        WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTERIMAGE | SS_CENTER,
         centerX-125, centerY-200, 250, 30,
         hwnd,NULL,NULL,NULL);
 

@@ -234,7 +234,7 @@ void showCartItem(HWND hwnd){
             borderTable,NULL,NULL,NULL);
         SetWindowText(allTotal,L"TOTAL : 0.00");
         return;
-    }
+    }else ShowWindow(textEmpty, SW_HIDE);
 
     for(int i = 0; i < cart.size(); i++){ //มีของในตะกร้าแสดงของ
         int y = (i * 40) - scrollPosition;
@@ -500,6 +500,26 @@ LRESULT CALLBACK ReceiptProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
             ScrollWindow(hwnd, 0, delta, NULL, NULL);
             UpdateWindow(hwnd);
             
+            break;
+        }
+
+        case WM_MOUSEWHEEL: {
+            int oldScroll = receiptScroll;
+
+            int delta = GET_WHEEL_DELTA_WPARAM(wParam);
+
+            if(delta > 0) receiptScroll -= 40;
+            else receiptScroll += 40;
+
+            if(receiptScroll < 0) receiptScroll = 0;
+            if(receiptScroll > receiptMaxScroll) receiptScroll = receiptMaxScroll;
+
+            SetScrollPos(hwnd, SB_VERT, receiptScroll, TRUE);
+
+            int move = oldScroll - receiptScroll;
+            ScrollWindow(hwnd, 0, move, NULL, NULL);
+            UpdateWindow(hwnd);
+
             break;
         }
 
