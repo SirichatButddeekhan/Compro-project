@@ -87,7 +87,7 @@ LRESULT CALLBACK LoginProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             else
             {
                 MessageBoxW(hwnd, L"Login Failed!", L"Failed", MB_OK);
-                ShowWindow(hwnd, SW_HIDE);
+                
             }
         }
         return 0;

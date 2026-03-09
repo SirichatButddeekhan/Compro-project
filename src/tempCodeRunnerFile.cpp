@@ -1,0 +1,1 @@
+g++ main.cpp menu.cpp menu_ser.cpp cart_ui.cpp cart_service.cpp crud.cpp filemanager.cpp login.cpp -municode -mwindows -o AAA_TEST.exe

@@ -143,13 +143,20 @@ case WM_CREATE:
     switch (LOWORD(wParam))
     {
     case 1:
-    CreateWindowExW(
+{
+    int screenW = GetSystemMetrics(SM_CXSCREEN);
+    int screenH = GetSystemMetrics(SM_CYSCREEN);
+
+    HWND h = CreateWindowExW(
         WS_EX_CLIENTEDGE, L"WindowClass", L"CREATE MENU",
         WS_OVERLAPPEDWINDOW | WS_VISIBLE,
-        300, 200, 500, 300,
+        0, 0, screenW, screenH,
         NULL, NULL, GetModuleHandle(NULL),
         (LPVOID)1
     );
+
+    ShowWindow(h, SW_MAXIMIZE);
+}
 break;
 
     case BTN_CREATE:
@@ -238,8 +245,6 @@ break;
     case BTN_UPDATE_OK:
     {
         const char* PATH = "../data/menu.csv";
-        MessageBoxW(hwnd, L"UPDATE BUTTON CLICKED", L"DEBUG", MB_OK);
-
         wchar_t bufId[64], bufName[256], bufPrice[64];
 
         GetWindowTextW(hUpdIdEdit, bufId, 64);
@@ -323,7 +328,6 @@ break;
 
 case WM_DESTROY:
 {
-    PostQuitMessage(0);
     break;
 }
 
