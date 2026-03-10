@@ -57,7 +57,7 @@ case WM_CREATE:
             centerX-150, centerY-50, 300, 25, hwnd, (HMENU)ID_EDIT_NAME, NULL, NULL);
 
         CreateWindowW(L"STATIC", L"Enter Price (****ห้ามใส่ / * + - *****):", WS_CHILD | WS_VISIBLE | SS_CENTERIMAGE,
-            centerX-150, centerY-20, 120, 20, hwnd, NULL, NULL, NULL);
+            centerX-150, centerY-20, 300, 20, hwnd, NULL, NULL, NULL);
 
         hPriceEdit = CreateWindowW(L"EDIT", L"", WS_CHILD | WS_VISIBLE | WS_BORDER,
             centerX-150, centerY, 300, 25, hwnd, (HMENU)ID_EDIT_PRICE, NULL, NULL);
