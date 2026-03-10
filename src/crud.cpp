@@ -285,7 +285,7 @@ break;
 
     delete_4 = CreateWindowExW(
         WS_EX_CLIENTEDGE, L"WindowClass", L"DELETE MENU",
-        WS_OVERLAPPEDWINDOW | WS_VISIBLE,
+        WS_OVERLAPPED| WS_VISIBLE | WS_SYSMENU,
         0, 0, 500 ,500,
         NULL, NULL, GetModuleHandle(NULL),
         (LPVOID)4
@@ -346,6 +346,8 @@ HWND createaccountadmin(HINSTANCE hInstance, HWND owner)
     wc.lpfnWndProc = CrudWndProc;
     wc.hInstance = hInstance;
     wc.lpszClassName = L"WindowClass";
+    wc.hbrBackground = CreateSolidBrush(RGB(255,240,205));
+
 
     RegisterClassW(&wc);
 

@@ -132,16 +132,9 @@ void DrawMenu(HWND hwnd, HDC hdc, RECT rc) {
         std::wstring priceText =
             std::to_wstring((int)menu[i].price) + L" Baht";
 
-        RECT priceRect = {
-            x,
-            y + boxH + 10,
-            x + boxW,
-            y + boxH + 45
-        };
-
+        RECT priceRect = {x,y + boxH + 10,x + boxW,y + boxH + 45};
         DrawTextW(hdc, priceText.c_str(), -1,
-                  &priceRect,
-                  DT_CENTER | DT_SINGLELINE | DT_VCENTER);
+                  &priceRect, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
 
         int btnX = x + boxW - 110;
         int btnY = y + boxH - 70;
@@ -209,6 +202,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg,
             SendMessage(borderTable, WM_MOUSEWHEEL, wParam, lParam);
             return 0;
         }
+
         RECT rc;
         GetClientRect(hwnd, &rc);
 
@@ -259,7 +253,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg,
     {
         int id = LOWORD(wParam);
 
-      
         if (id == BTN_CART) {
             isCartOpen = true;
             
@@ -276,15 +269,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg,
 
             InvalidateRect(hwnd, NULL, TRUE);
         }
-         else if (id >= BTN_ADD_BASE &&
-                 id < BTN_ADD_BASE + (int)menu.size())
+         else if (id >= BTN_ADD_BASE && id < BTN_ADD_BASE + (int)menu.size())
         {
             int index = id - BTN_ADD_BASE;
 
             cartSystem.addToCart(menu[index]);
 
-            std::wstring msg =
-                L"Added: " + menu[index].name;
+            std::wstring msg = L"Added: " + menu[index].name;
 
             MessageBoxW(hwnd, msg.c_str(),
                         L"Cart", MB_OK);
@@ -304,8 +295,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg,
         if(!isCartOpen){
             DrawMenu(hwnd, hdc, rc);
         }
-
-
+        
         EndPaint(hwnd, &ps);
     }
     break;
