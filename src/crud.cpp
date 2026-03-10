@@ -44,7 +44,7 @@ case WM_CREATE:
 
     if (mode == 1) {
 
-        CreateWindowW(L"STATIC", L"Enter ID(****ห้ามใส่ / * + - *****):", WS_CHILD | WS_VISIBLE | SS_CENTERIMAGE,
+        CreateWindowW(L"STATIC", L"Enter ID (****ห้ามใส่ / * + - *****):", WS_CHILD | WS_VISIBLE | SS_CENTERIMAGE,
             centerX-150, centerY-120, 300, 20, hwnd, NULL, NULL, NULL);
 
         hIdEdit = CreateWindowW(L"EDIT", L"", WS_CHILD | WS_VISIBLE | WS_BORDER,
@@ -56,7 +56,7 @@ case WM_CREATE:
         hNameEdit = CreateWindowW(L"EDIT", L"", WS_CHILD | WS_VISIBLE | WS_BORDER,
             centerX-150, centerY-50, 300, 25, hwnd, (HMENU)ID_EDIT_NAME, NULL, NULL);
 
-        CreateWindowW(L"STATIC", L"Enter Price:", WS_CHILD | WS_VISIBLE | SS_CENTERIMAGE,
+        CreateWindowW(L"STATIC", L"Enter Price (****ห้ามใส่ / * + - *****):", WS_CHILD | WS_VISIBLE | SS_CENTERIMAGE,
             centerX-150, centerY-20, 120, 20, hwnd, NULL, NULL, NULL);
 
         hPriceEdit = CreateWindowW(L"EDIT", L"", WS_CHILD | WS_VISIBLE | WS_BORDER,
