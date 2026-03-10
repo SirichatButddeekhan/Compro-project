@@ -286,7 +286,7 @@ break;
     delete_4 = CreateWindowExW(
         WS_EX_CLIENTEDGE, L"WindowClass", L"DELETE MENU",
         WS_OVERLAPPED| WS_VISIBLE | WS_SYSMENU,
-        0, 0, 500 ,500,
+        550, 200, 500, 500,
         NULL, NULL, GetModuleHandle(NULL),
         (LPVOID)4
     );
