@@ -44,8 +44,8 @@ case WM_CREATE:
 
     if (mode == 1) {
 
-        CreateWindowW(L"STATIC", L"Enter ID:", WS_CHILD | WS_VISIBLE | SS_CENTERIMAGE,
-            centerX-150, centerY-120, 120, 20, hwnd, NULL, NULL, NULL);
+        CreateWindowW(L"STATIC", L"Enter ID(****ห้ามใส่ / * + - *****):", WS_CHILD | WS_VISIBLE | SS_CENTERIMAGE,
+            centerX-150, centerY-120, 300, 20, hwnd, NULL, NULL, NULL);
 
         hIdEdit = CreateWindowW(L"EDIT", L"", WS_CHILD | WS_VISIBLE | WS_BORDER,
             centerX-150, centerY-100, 300, 25, hwnd, (HMENU)ID_EDIT_ID, NULL, NULL);
@@ -173,6 +173,10 @@ break;
 
         if (id <= 0 || name.empty()) {
             MessageBoxW(hwnd, L"Please input valid ID and Name", L"ERROR", MB_OK | MB_ICONWARNING);
+            break;
+        }
+        else if (price <= 0 ) {
+            MessageBoxW(hwnd, L"ใส่ราคาติดลบไม่ได้นะค้าบบบบ", L"ERROR", MB_OK | MB_ICONWARNING);
             break;
         }
 
